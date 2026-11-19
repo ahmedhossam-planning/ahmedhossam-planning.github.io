@@ -111,3 +111,39 @@
  header{position:relative!important}
  .hero h1,.page-hero h1,.hero-copy h1{font-size:min(15vh,64px)!important;line-height:1}
 }
+
+/* About: career programme (Gantt) */
+.cg{margin:0 0 44px;background:var(--paper);border:1px solid #d0c9be;padding:22px 22px 16px}
+.cg-legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#53544d;margin-bottom:14px}
+.cg-legend span{display:inline-flex;align-items:center;gap:8px}
+.cg-key{display:inline-block;width:22px;height:9px;background:#a78d73}
+.cg-key.cg-edu{background:#5b7895}
+.cg-ms-key{width:10px;height:10px;background:#242726;transform:rotate(45deg)}
+.cg-dd-key{width:0;height:14px;border-left:2px dashed #b54835;background:none}
+.cg-row,.cg-scale,.cg-ddwrap{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr);gap:18px;align-items:center}
+.cg-row{padding:10px 0;border-top:1px solid #e0d9cd}
+.cg-label b{display:inline;font:400 17px/1.25 Georgia,serif;color:#242726}
+.cg-label span{display:block;font-size:12px;color:#53544d;margin-top:2px}
+.cg-label small{display:block;font-size:11px;letter-spacing:.06em;color:#5f4630;margin-top:3px;font-weight:700}
+.cg-tag{font-style:normal;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#3f5a73;border:1px solid #5b7895;padding:1px 6px;margin-left:8px;vertical-align:3px}
+.cg-track{position:relative;height:22px;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(12.5% - 1px),#e4ddd1 calc(12.5% - 1px),#e4ddd1 12.5%)}
+.cg-bar{position:absolute;top:4px;height:14px;background:#a78d73}
+.cg-bar.cg-edu{background:#5b7895}
+.cg-bar.cg-live{background:linear-gradient(90deg,#a78d73 70%,#cbb79e)}
+.cg-ms{position:absolute;top:4px;width:14px;height:14px;margin-left:-7px;background:#242726;transform:rotate(45deg)}
+.cg-ticks{background:none;height:18px}
+.cg-ticks span{position:absolute;top:0;font-size:11px;color:#53544d;transform:translateX(-50%);letter-spacing:.04em}
+.cg-ticks span:first-child{transform:none}
+.cg-body{position:relative}
+.cg-ddwrap{position:absolute;inset:0;pointer-events:none}
+.cg-ddwrap .cg-track{height:100%;background:none}
+.cg-dd{position:absolute;top:-6px;bottom:0;border-left:2px dashed #b54835}
+.cg-dd span{position:absolute;top:-16px;left:4px;font:700 9px/1 Arial,sans-serif;letter-spacing:.14em;color:#b54835;white-space:nowrap;transform:translateX(-100%);padding-right:8px}
+@media(max-width:760px){
+ .cg{padding:16px 14px 12px}
+ .cg-row,.cg-scale,.cg-ddwrap{grid-template-columns:minmax(0,1fr);gap:6px}
+ .cg-scale .cg-label,.cg-ddwrap .cg-label{display:none}
+ .cg-ticks span{font-size:10px}
+ .cg-ticks span:nth-child(even){display:none}
+ .cg-ddwrap,.cg-legend .cg-ld-dd{display:none}
+}
