@@ -17,8 +17,9 @@
     $('.intro-skip',intro)?.addEventListener('click',hideIntro);
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!intro.hidden)hideIntro()});
     $$('[data-replay-logo]').forEach(b=>b.addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'});setTimeout(showIntro,250)}));
-    let already=false;try{already=sessionStorage.getItem('ahMonolithLogoIntroV2')==='1';sessionStorage.setItem('ahMonolithLogoIntroV2','1')}catch(e){}
-    if(!already && document.body.dataset.autoIntro==='yes')showIntro();
+    // Play on arrival at the home page (new visit or reload); skip when moving between pages of this site.
+    let internal=false;try{internal=!!document.referrer&&new URL(document.referrer).origin===location.origin&&performance.getEntriesByType('navigation')[0]?.type!=='reload'}catch(e){}
+    if(!internal && document.body.dataset.autoIntro==='yes')showIntro();
   }
   // Change home-sector copy without loading the 72-row original register.
   const sectorBox=$('#sector-detail');
@@ -44,7 +45,7 @@
     function card(item){let a=document.createElement('article');a.className='sample-card';a.dataset.kind=item.kind;
      let t=document.createElement('div');t.className='sample-thumb';let img=document.createElement('img');img.src=item.thumb;img.alt='Preview of '+item.title+' report';img.loading='lazy';t.append(img);
      let body=document.createElement('div');body.className='sample-body';let micro=document.createElement('span');micro.className='eyebrow';micro.textContent=item.kind+' / '+item.sector;let h=document.createElement('h3');h.textContent=item.title;let p=document.createElement('p');p.textContent=item.desc;
-     let l=document.createElement('a');l.className='link-arrow';l.href=item.href;l.target='_blank';l.rel='noopener';l.textContent='View PDF  ↗';l.setAttribute('aria-label','Open '+item.title+' PDF');body.append(micro,h,p,l);a.append(t,body);return a;}
+     let l=document.createElement('a');l.className='link-arrow';l.href=item.href;l.target='_blank';l.rel='noopener';l.textContent='View PDF';l.setAttribute('aria-label','Open '+item.title+' PDF');body.append(micro,h,p,l);a.append(t,body);return a;}
     function render(){buttons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.kind===selected)));let reports=window.AH_REPORTS.filter(r=>selected==='All'||r.kind===selected);gallery.replaceChildren(...reports.map(card));count.textContent=reports.length+(reports.length===1?' report':' reports')+(selected==='All'?' in the library':' · '+selected);}
     buttons.forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.kind;render()}));render();
   }

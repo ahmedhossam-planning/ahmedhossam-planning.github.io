@@ -99,7 +99,7 @@
     const cut = !rAll && rf === 'ALL' && !q && rows.length > RMAX;
     const mb = $('#rmore');
     mb.hidden = !(cut || (rAll && rf === 'ALL' && !q && rows.length > RMAX));
-    mb.textContent = cut ? `Show all ${rows.length} projects ↓` : 'Show fewer ↑';
+    mb.textContent = cut ? `Show all ${rows.length} projects` : 'Show fewer';
     mb.setAttribute('aria-expanded', String(!cut));
     $('#rcount').textContent = `${rows.length} of ${DATA.projects.length} projects` + (rf === 'ALL' ? '' : ` · ${rf}`) + (q ? ` · matching “${$('#rsearch').value.trim()}”` : '');
     $('#rbody').innerHTML = (cut ? rows.slice(0, RMAX) : rows).map(p => {
