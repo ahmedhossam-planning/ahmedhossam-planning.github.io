@@ -15,5 +15,7 @@ window.AH_REPORTS = [
  {id:4,kind:'Narrative',sector:'Healthcare',title:'Hospital ED expansion | Update 11',desc:'Forecast against contract, critical path, lookahead, risks and recovery options.',href:'samples/narrative.pdf',thumb:'samples/narrative.png'},
  {id:5,kind:'TIA',sector:'Water',title:'Water treatment plant | TIA 03',desc:'Differing site condition, fragnet, impacted vs unimpacted runs and a concurrency check.',href:'samples/tia.pdf',thumb:'samples/tia.png'},
  {id:6,kind:'DCMA',sector:'Federal',title:'Maintenance facility | Rev 0 and Rev 1',desc:'All 14 checks for two baseline revisions, the findings and the fix for each.',href:'samples/dcma.pdf',thumb:'samples/dcma.png'},
- {id:7,kind:'Comparison',sector:'Data centers',title:'Data center | Update 08 vs 09',desc:'Milestone movement, every change type, and the three changes that need backup.',href:'samples/comparison.pdf',thumb:'samples/comparison.png'}
+ {id:7,kind:'Comparison',sector:'Data centers',title:'Data center | Update 08 vs 09',desc:'Milestone movement, every change type, and the three changes that need backup.',href:'samples/comparison.pdf',thumb:'samples/comparison.png'},
+ {id:8,kind:'Schedule',sector:'Water',title:'Booster pump station | P6 Update 06',desc:'Primavera P6 detailed schedule: 77 activities by WBS, actuals to the data date, baseline bars and float to contract completion.',href:'samples/p6-schedule.pdf',thumb:'samples/p6-schedule.png'},
+ {id:9,kind:'Schedule',sector:'Education',title:'School classroom addition | MS Project baseline',desc:'MS Project detailed baseline: 62 tasks with predecessors and resources, and the renovation fitted inside the summer break.',href:'samples/msp-schedule.pdf',thumb:'samples/msp-schedule.png'}
 ];
