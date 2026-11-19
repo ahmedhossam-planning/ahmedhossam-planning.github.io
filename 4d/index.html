@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%2313202C'/%3E%3Crect x='5' y='9' width='14' height='4' fill='%23C8372D'/%3E%3Crect x='11' y='15' width='16' height='4' fill='%23E8EBEE'/%3E%3Crect x='8' y='21' width='10' height='4' fill='%23E8EBEE'/%3E%3C/svg%3E">
+<link rel="icon" href="../assets/branding/favicon.png" type="image/png">
 <meta charset="utf-8">
-<title>4D Model Gallery</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<title>4D Model Gallery | Ahmed Hossam — Project Controls</title>
 <style>
 /* Layout: P6 workspace. Project picker by sector on top, 3D model left, activity inspector right, Gantt underneath. */
 :root{
@@ -79,17 +78,51 @@ h2{font-family:var(--f-disp);font-size:1rem;margin:0 0 8px}
 #gsvg .nm{fill:var(--ink)}
 #gsvg .row{cursor:pointer}
 .err{padding:20px;color:var(--crit)}
-@media (max-width:900px){.grid{grid-template-columns:1fr}}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+</style>
+<style>/* Monolith skin */
+:root{--paper:#f2eee7;--sheet:#f8f5ef;--ink:#242726;--rule:#d0c9be;--band:#e4ddd1;--ui-muted:#55564f;--accent:#5f4630;
+ --f-disp:Georgia,"Times New Roman",serif;--f-body:Arial,"Segoe UI",sans-serif;--f-mono:ui-monospace,Consolas,"Courier New",monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#191d1c;--sheet:#242726;--ink:#ede9e0;--rule:#3f433e;--band:#2b2f2d;--ui-muted:#b9b9b1;--accent:#d4bda4}}
+:root[data-theme="dark"]{--paper:#191d1c;--sheet:#242726;--ink:#ede9e0;--rule:#3f433e;--band:#2b2f2d;--ui-muted:#b9b9b1;--accent:#d4bda4}
+h1,h2{font-family:var(--f-disp);font-weight:400}h2{font-size:1.15rem}
+.eyebrow{color:var(--accent)}
+.sub,.hint,.card .mono,.kv span,.tab{color:var(--ui-muted)}#gsvg text{fill:var(--ui-muted)}#gsvg .nm{fill:var(--ink)}
+.tab,.card,.btn,.timebar select,.pill{border-radius:0}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.card[aria-current="true"]{border-color:#a78d73;box-shadow:inset 3px 0 0 #a78d73}
+.card:hover,.tab:hover{border-color:#a78d73}
+.hud .dd{font-weight:400}
+.timebar input[type=range]{accent-color:#a78d73}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.mh{background:#1b1f1d;border-bottom:1px solid #3f433e}
+.mh-in{max-width:1320px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:space-between;gap:14px}
+.mh-brand{display:flex;align-items:center;gap:10px;color:#f2eee7;text-decoration:none}
+.mh-brand b{display:block;font:400 17px/1.1 Georgia,serif;letter-spacing:.06em}
+.mh-brand small{display:block;font:700 9px Arial,sans-serif;letter-spacing:.28em;color:#cbb79e;margin-top:3px}
+.mh-nav{display:flex;gap:18px;align-items:center}
+.mh-nav a{color:#e4e0d8;font:700 11px Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+.mh-nav a:hover{color:#d4bda4}.mh-nav .mh-cta{border:1px solid #a78d73;padding:10px 12px}
+.mh :focus-visible,.mh-hero :focus-visible{outline-color:#d4bda4}
+.mh-hero{background:#242726;color:#ede9e0;border-bottom:1px solid #3f433e}
+.mh-hero-in{max-width:1320px;margin:0 auto;padding:40px max(16px,env(safe-area-inset-right,0px)) 34px max(16px,env(safe-area-inset-left,0px))}
+.mh-hero .eyebrow{color:#cbb79e;font:700 11px Arial,sans-serif;letter-spacing:.24em;margin:0}
+.mh-hero h1{font:400 clamp(2.2rem,5vw,3.6rem)/1.05 Georgia,serif;color:#f2eee7;margin:10px 0 0}
+.mh-hero h1 em{color:#a78d73}
+.mh-hero .sub{color:#c9c6bd;max-width:78ch;margin:14px 0 0}
+@media(max-width:760px){.mh-nav .mh-hide{display:none}.mh-hero-in{padding-top:26px;padding-bottom:22px}}
+.mh-short{display:none}
+@media(max-width:600px){#view .tools{top:auto;bottom:8px;left:8px;right:8px;justify-content:flex-start;gap:4px}#view .tools .btn{padding:5px 7px;font-size:.68rem}.hud .dd{font-size:1rem}.hud .st{font-size:.66rem}}
+@media(max-width:430px){.mh-brand span{display:none}.mh-nav{gap:12px}.mh-long{display:none}.mh-short{display:inline}.mh-nav a{letter-spacing:.08em}}
 </style>
 </head>
 <body>
-<a href="../index.html#featured" style="position:fixed;left:12px;bottom:12px;z-index:50;font:500 12px var(--f-mono);background:var(--sheet);color:var(--ink);border:1px solid var(--rule);padding:6px 10px;border-radius:3px;text-decoration:none">← Portfolio</a>
+<header class="mh"><div class="mh-in"><a class="mh-brand" href="../index.html" aria-label="Ahmed Hossam, Project Controls - Homepage"><img src="../assets/branding/ahmed_hossam_mark_on_dark.png" width="40" height="35" alt=""><span><b>AHMED HOSSAM</b><small>PROJECT CONTROLS</small></span></a>
+<nav class="mh-nav" aria-label="Site"><a href="../4d.html">← 4D overview</a><a class="mh-hide" href="../projects.html">Projects</a><a class="mh-hide" href="../samples.html">Reports</a><a class="mh-cta" href="../index.html#contact"><span class="mh-long">Discuss a project</span><span class="mh-short">Contact</span> ↗</a></nav></div></header>
 
 
+<section class="mh-hero"><div class="mh-hero-in"><p class="eyebrow mono">4D SCHEDULE DEMONSTRATIONS · LOD 350 · CPM-LINKED</p><h1>4D model <em>gallery.</em></h1><p class="sub">Demonstration models, three per sector, each built from the type of work in my portfolio. Every element is linked to an activity in its CPM baseline, so the model is built by the schedule as the data date moves.</p></div></section>
 <div class="wrap">
-  <p class="eyebrow mono">4D SCHEDULE DEMONSTRATIONS · LOD 350 · CPM-LINKED</p>
-  <h1>4D Model Gallery</h1>
-  <p class="sub">Demonstration models, three per sector, each built from the type of work in my portfolio. Every element is linked to an activity in its CPM baseline, so the model is built by the schedule as the data date moves.</p>
   <div class="tabs" id="tabs" role="group" aria-label="Sector"></div>
   <div class="cards" id="cards"></div>
 
