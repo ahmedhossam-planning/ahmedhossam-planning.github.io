@@ -58,7 +58,23 @@
     fileInput?.addEventListener('change',()=>{objectUrls.forEach(URL.revokeObjectURL);objectUrls=[];previews.replaceChildren();let files=[...(fileInput.files||[])].slice(0,12);let accepted=0;files.forEach(file=>{if(!file.type.startsWith('image/')||file.size>8e6)return;let url=URL.createObjectURL(file);objectUrls.push(url);let item=document.createElement('div');item.className='preview-item';let img=document.createElement('img');img.src=url;img.alt='Local preview of '+file.name;let label=document.createElement('span');label.textContent=file.name;item.append(img,label);previews.append(item);accepted++});status.textContent=accepted?accepted+' local previews displayed. Nothing has been uploaded or published.':'Select JPEG, PNG, or WebP images up to 8 MB each.';});
     window.addEventListener('pagehide',()=>objectUrls.forEach(URL.revokeObjectURL));
   }
-  // Static site inquiry: prepares an email; does not submit files or send automatically.
+  // Enquiry form: posts to a Google Apps Script web app that adds a row to the enquiries Sheet and emails Ahmed.
   const inquiry=$('#inquiry-form');
-  if(inquiry){inquiry.addEventListener('submit',e=>{e.preventDefault();let form=new FormData(inquiry);let subject='Project controls inquiry - '+(form.get('service')||'Scheduling');let lines=['Project / location: '+(form.get('project')||'Not specified'),'Requested service: '+(form.get('service')||''),'Brief: '+(form.get('details')||''),'Reply to: '+(form.get('email')||'')];location.href='mailto:ahmed.hs.abdulhamid@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(lines.join('\n\n'))});}
+  if(inquiry){
+    const ENDPOINT='https://script.google.com/macros/s/AKfycbzjxDHgw2Wicbu4JVkv7Io270uuGsqmeLTeQxedcAGLshQjj8VNw-nJoTGtu3r1eLzO/exec';
+    const status=$('#form-status'),btn=$('button[type=submit]',inquiry);
+    const say=(msg,ok)=>{status.textContent=msg;status.className='form-status '+(ok?'is-ok':'is-err');};
+    inquiry.addEventListener('submit',async e=>{e.preventDefault();
+      const d=new FormData(inquiry);
+      if((d.get('website')||'').trim()){say('Thank you. Your enquiry has been sent.',true);inquiry.reset();return;}
+      const name=(d.get('name')||'').trim(),email=(d.get('email')||'').trim(),details=(d.get('details')||'').trim();
+      if(!name||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)||!details){say('Please add your name, a valid email and a short description.',false);return;}
+      const body=new URLSearchParams({name,email,project:(d.get('project')||'').trim(),service:d.get('service')||'',details,page:location.pathname});
+      btn.disabled=true;btn.textContent='Sending...';
+      try{await fetch(ENDPOINT,{method:'POST',mode:'no-cors',body});
+        say('Thank you, '+name.split(' ')[0]+'. Your enquiry has been sent and I will reply by email within one working day.',true);inquiry.reset();}
+      catch(err){say('The form could not be sent. Please email ahmed.hs.abdulhamid@gmail.com or use WhatsApp.',false);}
+      finally{btn.disabled=false;btn.textContent='Send enquiry';}
+    });
+  }
 })();

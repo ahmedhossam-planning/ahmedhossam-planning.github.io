@@ -147,3 +147,7 @@
  .cg-ticks span:nth-child(even){display:none}
  .cg-ddwrap,.cg-legend .cg-ld-dd{display:none}
 }
+/* enquiry form: honeypot + status */
+.hp-field{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+.form-status{min-height:1.2em;margin:12px 0 0;font-size:14px;font-weight:700}
+.form-status.is-ok{color:#2e6b3a}.form-status.is-err{color:#a23b2a}
