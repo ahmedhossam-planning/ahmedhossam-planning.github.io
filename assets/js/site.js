@@ -5,13 +5,22 @@
   const intro=$('[data-brand-intro]');let introTimers=[];
   function clearIntroTimers(){introTimers.forEach(clearTimeout);introTimers=[];}
   function hideIntro(){if(!intro)return;clearIntroTimers();intro.hidden=true;intro.className='ah-intro';document.body.classList.remove('intro-active');}
-  function showIntro(){if(!intro||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  function showIntro(){if(!intro)return;
+     const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, phone=innerWidth<=760;
      const target=$('[data-brand-target]'); if(target){const r=target.getBoundingClientRect();intro.style.setProperty('--brand-dx',(r.left+r.width/2-innerWidth/2)+'px');intro.style.setProperty('--brand-dy',(r.top+r.height/2-innerHeight/2)+'px');}
      clearIntroTimers(); intro.hidden=false; intro.className='ah-intro';document.body.classList.add('intro-active');
-     introTimers.push(setTimeout(()=>intro.classList.add('is-revealed'),80));
-     introTimers.push(setTimeout(()=>intro.classList.add('is-shrinking'),1150));
-     introTimers.push(setTimeout(()=>intro.classList.add('is-ending'),1650));
-     introTimers.push(setTimeout(hideIntro,2100));
+     // Start only once the logo has loaded (max 1.5 s), so slow mobile data never shows an empty screen.
+     const mark=$('.ah-intro-mark',intro);
+     const ready=(mark&&!mark.complete)?new Promise(res=>{mark.addEventListener('load',res,{once:true});mark.addEventListener('error',res,{once:true});introTimers.push(setTimeout(res,1500));}):Promise.resolve();
+     ready.then(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+       if(intro.hidden)return;
+       // reduced motion: fade in, hold, fade out (no movement). Phones hold a little longer.
+       const t=reduce?{show:20,end:1900,hide:2450}:{show:30,shrink:phone?1500:1150,end:phone?2050:1650,hide:phone?2550:2100};
+       introTimers.push(setTimeout(()=>intro.classList.add('is-revealed'),t.show));
+       if(t.shrink)introTimers.push(setTimeout(()=>intro.classList.add('is-shrinking'),t.shrink));
+       introTimers.push(setTimeout(()=>intro.classList.add('is-ending'),t.end));
+       introTimers.push(setTimeout(hideIntro,t.hide));
+     })));
   }
   if(intro){
     $('.intro-skip',intro)?.addEventListener('click',hideIntro);
