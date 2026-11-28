@@ -1,0 +1,108 @@
+/* Arabic (RTL) overrides for the /ar/ pages, loaded after site.css (and after 4d.html / gallery inline CSS).
+   Grid and flex layouts flip on their own with dir="rtl"; this file fixes borders, absolute positions,
+   fonts and letter-spacing (tracking breaks joined Arabic letters). Charts and timelines stay left-to-right. */
+html[dir=rtl] body,html[dir=rtl] body *{font-family:'IBM Plex Sans Arabic',Tahoma,Arial,sans-serif!important;letter-spacing:0!important;text-transform:none!important}
+html[dir=rtl] h1,html[dir=rtl] h2,html[dir=rtl] h3,html[dir=rtl] h4,html[dir=rtl] h1 *,html[dir=rtl] h2 *,html[dir=rtl] h3 *,
+html[dir=rtl] .display,html[dir=rtl] .h-section,html[dir=rtl] .brand-type strong,html[dir=rtl] .footer-grid strong,html[dir=rtl] .stat b,
+html[dir=rtl] .sector-choice b,html[dir=rtl] .step strong,html[dir=rtl] .sector-tile b,html[dir=rtl] .tool b,html[dir=rtl] .cta-inner b,
+html[dir=rtl] .cg-label b,html[dir=rtl] .ah-intro-wordmark strong,html[dir=rtl] .reg-table td:nth-child(2),
+html[dir=rtl] .approved-brand-text>span,html[dir=rtl] .hero-lead,html[dir=rtl] .sector span,html[dir=rtl] .stat strong,
+html[dir=rtl] .stage-no strong,html[dir=rtl] .sector-detail .sector-number,html[dir=rtl] .mh-brand b{font-family:'Noto Naskh Arabic','IBM Plex Sans Arabic',serif!important}
+html[dir=rtl] em{font-style:normal!important}
+html[dir=rtl] .stat strong{font-style:normal!important}
+/* Arabic needs more height and slightly larger small labels */
+html[dir=rtl] body{line-height:1.85}
+html[dir=rtl] .display,html[dir=rtl] .h-section,html[dir=rtl] .hero-copy h1,html[dir=rtl] .four-d-copy h2,html[dir=rtl] .contact-layout h2,
+html[dir=rtl] .about-split h2,html[dir=rtl] .section-head h2,html[dir=rtl] .hero h1,html[dir=rtl] .cta-layout h2,html[dir=rtl] .source-intro h2,
+html[dir=rtl] .sector-detail h3,html[dir=rtl] .sector-description h3{line-height:1.3!important}
+html[dir=rtl] .hero-copy h1{font-size:clamp(56px,6.4vw,100px)}
+html[dir=rtl] .eyebrow,html[dir=rtl] .nav a,html[dir=rtl] .btn,html[dir=rtl] .link-arrow,html[dir=rtl] .filter-btn,html[dir=rtl] .count-line,
+html[dir=rtl] .field label,html[dir=rtl] .contact-meta span,html[dir=rtl] .service-card .number,html[dir=rtl] .service-card .delivered,
+html[dir=rtl] .sector-description dt,html[dir=rtl] .pmeta dt,html[dir=rtl] .tool small,html[dir=rtl] .foot-bottom,html[dir=rtl] .replay-logo,
+html[dir=rtl] .g-legend,html[dir=rtl] .rule-index,html[dir=rtl] .insight dt,html[dir=rtl] .cg-legend,html[dir=rtl] .evm-legend,html[dir=rtl] .evm-kpi span,
+html[dir=rtl] .evm-slider,html[dir=rtl] .tag,html[dir=rtl] .sector-tile .num,html[dir=rtl] .brand-type span,html[dir=rtl] .micro,
+html[dir=rtl] .mainnav a,html[dir=rtl] .button-primary,html[dir=rtl] .button-line,html[dir=rtl] .control-btn,html[dir=rtl] .small-label,
+html[dir=rtl] .detail-actions a,html[dir=rtl] .timeline-note a,html[dir=rtl] footer{font-size:12px!important}
+html[dir=rtl] .stat span{font-size:12px}
+html[dir=rtl] .hero-art:before{content:'01 / الشكل'}html[dir=rtl] .hero-art:after{content:'التسلسل / الهيكل'}
+
+/* shared chrome */
+html[dir=rtl] .skip-link{left:auto;right:20px}
+/* honeypot field sits off-screen; on the left it would widen an RTL page */
+html[dir=rtl] .hp-field{left:auto!important;right:-9999px!important}
+html[dir=rtl] .page-hero:after{right:auto;left:-130px}
+html[dir=rtl] .ah-intro-wordmark{border-left:0;border-right:1px solid #a98c6b;padding-left:0;padding-right:34px;transform:translateX(26px)}
+html[dir=rtl] .ah-intro.is-revealed .ah-intro-wordmark{transform:translateX(0)}
+html[dir=rtl] .ah-intro.is-shrinking .ah-intro-wordmark{transform:translateX(40px)}
+html[dir=rtl] .intro-skip{right:auto;left:5%}
+html[dir=rtl] .footer-grid .foot-links{align-items:start}
+/* home */
+html[dir=rtl] .hero-copy{padding:105px 0 96px 50px}
+html[dir=rtl] .hero-art{border-left:0;border-right:1px solid #66675e}
+html[dir=rtl] .hero-art:before{left:auto;right:30px}html[dir=rtl] .hero-art:after{right:auto;left:32px}
+html[dir=rtl] .stat{border-left:0;border-right:1px solid #65675c}html[dir=rtl] .stat:first-child{border-right:0}
+html[dir=rtl] .sector-choices{border-right:0;border-left:1px solid #aaa89f}
+html[dir=rtl] .sector-choice,html[dir=rtl] .type-tile{text-align:right}
+html[dir=rtl] .step{border-right:0;border-left:1px solid #74766d}html[dir=rtl] .step:nth-child(3n){border-left:0}
+html[dir=rtl] .four-d-visual .mini-label{left:auto;right:22px}
+html[dir=rtl] .evm-chart svg,html[dir=rtl] .evm-slider input{direction:ltr}
+html[dir=rtl] .evm-kpi b,html[dir=rtl] .evm-slider b,html[dir=rtl] .stat b{direction:ltr;unicode-bidi:isolate;text-align:right}
+html[dir=rtl] .evm-legend i{margin-right:0;margin-left:7px}
+/* projects */
+html[dir=rtl] .data-table th{text-align:right}
+html[dir=rtl] .reg-table th.num,html[dir=rtl] .reg-table td.num{text-align:left}
+html[dir=rtl] .reg-table .dot{margin-right:0;margin-left:8px}
+html[dir=rtl] .reg-table tbody tr.is-open{box-shadow:inset -3px 0 var(--bronze)}
+html[dir=rtl] .reg-table td.code,html[dir=rtl] .psteps .aid,html[dir=rtl] .reg-table td.num{direction:ltr;unicode-bidi:isolate}
+html[dir=rtl] .gscroll,html[dir=rtl] #gantt{direction:ltr}
+html[dir=rtl] .prole{padding-left:0;padding-right:18px}
+html[dir=rtl] .sbar{margin-left:0!important}
+html[dir=rtl] .intro-note{border-left:0;border-right:3px solid var(--bronze)}
+/* about: career chart keeps a left-to-right time axis */
+html[dir=rtl] .cg-row,html[dir=rtl] .cg-scale,html[dir=rtl] .cg-ddwrap{direction:ltr}
+html[dir=rtl] .cg-label{direction:rtl;text-align:right}
+html[dir=rtl] .cg-tag{margin-left:0;margin-right:8px}
+@media(max-width:960px){html[dir=rtl] .menu-toggle{margin-left:0;margin-right:auto}}
+@media(max-width:760px){
+ html[dir=rtl] .hero-copy{padding:68px 0 62px}
+ html[dir=rtl] .hero-art{border-right:0}
+ html[dir=rtl] .stat:nth-child(odd){border-right:0}
+ html[dir=rtl] .sector-choices{border-left:0}
+ html[dir=rtl] .step:nth-child(3n){border-left:1px solid #74766d}html[dir=rtl] .step:nth-child(2n){border-left:0}
+ html[dir=rtl] .ah-intro-wordmark{padding-right:16px}
+ html[dir=rtl] .reg-table td.num{text-align:right}
+ html[dir=rtl] .reg-table td.num:before{content:'عدد الأنشطة '}
+}
+@media(max-width:520px){html[dir=rtl] .ah-intro-wordmark{padding-right:10px}}
+
+/* 4d.html (own inline CSS) */
+html[dir=rtl] .skip{left:auto;right:10px}
+html[dir=rtl] .hero-art{border-left:0}
+html[dir=rtl] .hero-art:after{left:auto;right:12%;background:linear-gradient(270deg,#b49d84,transparent)}
+html[dir=rtl] .art-note{right:auto;left:9%}
+html[dir=rtl] .art-bottom{right:auto;left:8%;text-align:left}
+html[dir=rtl] .hero-stat .stat{padding:24px 0 27px 28px;border-right:0;border-left:1px solid #50564f}
+html[dir=rtl] .hero-stat .stat:not(:first-child){padding-left:28px;padding-right:30px}
+html[dir=rtl] .hero-stat .stat:last-child{border-left:0}
+html[dir=rtl] .principle{padding:33px 0 33px 32px;border-right:0;border-left:1px solid #9b9990}
+html[dir=rtl] .principle:not(:first-child){padding-left:32px;padding-right:32px}
+html[dir=rtl] .principle:last-child{border-left:0}
+html[dir=rtl] .sector-list{border-right:0;border-left:1px solid #aaa69a}
+html[dir=rtl] .sector{text-align:right;padding:24px 0 24px 17px}
+html[dir=rtl] .sector[aria-selected="true"],html[dir=rtl] .sector:hover{padding-left:17px;padding-right:15px}
+html[dir=rtl] .sector-detail:before{right:auto;left:-140px}
+html[dir=rtl] .sector-detail .sector-number{right:auto;left:45px}
+html[dir=rtl] .model-label{left:auto;right:23px}html[dir=rtl] .model-wm{right:auto;left:24px}html[dir=rtl] .model-hint{left:auto;right:25px}
+html[dir=rtl] .scrub-controls input[type=range]{direction:ltr}
+@media(max-width:760px){
+ html[dir=rtl] .hero-stat .stat,html[dir=rtl] .hero-stat .stat:not(:first-child){padding:17px 0;border-left:0}
+ html[dir=rtl] .principle,html[dir=rtl] .principle:not(:first-child){padding:27px 0;border-left:0}
+ html[dir=rtl] .sector-list{border-left:0}
+}
+
+/* 4D gallery (ar/4d/index.html): 3D view, timeline and Gantt stay left-to-right */
+html[dir=rtl] #view,html[dir=rtl] .timebar,html[dir=rtl] .gantt .gscroll,html[dir=rtl] #gsvg{direction:ltr}
+html[dir=rtl] .hud,html[dir=rtl] .tools{direction:rtl}
+html[dir=rtl] .kv b,html[dir=rtl] .mono{unicode-bidi:plaintext}
+
+html[dir=rtl] .evm-data th:first-child,html[dir=rtl] .evm-data td:first-child{text-align:right}html[dir=rtl] .evm-data table{direction:rtl}

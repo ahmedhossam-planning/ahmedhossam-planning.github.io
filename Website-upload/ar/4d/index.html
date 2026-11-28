@@ -1,0 +1,1457 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="../../assets/branding/favicon.png" type="image/png">
+<meta charset="utf-8">
+<title>معرض النماذج رباعية الأبعاد | أحمد حسام</title>
+<style>
+/* Layout: P6 workspace. Project picker by sector on top, 3D model left, activity inspector right, Gantt underneath. */
+:root{
+  --paper:#F4F6F8; --sheet:#FFFFFF; --ink:#13202C; --muted:#5A6876; --rule:#D5DCE3; --band:#E9EEF3;
+  --crit:#C8372D; --live:#E08A1E; --sel:#1F86B8;
+  --scene:#DDE7EE; --ground:#B9CBA8; --road:#7C8287; --mark:#F4F1E6; --bldg:#C9CED3; --tree:#5E8C4A; --trunk:#7A5A3E; --car:#8A97A6; --water:#8DB8D2; --lawn:#8FB572;
+  --t-site:#9C7B55; --t-conc:#A9AFB6; --t-shell:#C9B9A0; --t-steel:#3E6FA3; --t-roof:#E8EBEE; --t-env:#8FC3D9;
+  --t-mech:#2E9C86; --t-elec:#D9A21B; --t-fire:#D2463A; --t-pave:#5C6268; --t-arch:#B08BC9;
+  --f-disp:"Archivo","Arial Narrow",Arial,sans-serif; --f-body:"IBM Plex Sans","Segoe UI",Arial,sans-serif; --f-mono:"IBM Plex Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0F161D; --sheet:#151F29; --ink:#E6ECF2; --muted:#93A2B1; --rule:#2A3846; --band:#1B2733;
+  --crit:#F0675B; --live:#F2A443; --sel:#5EC0EC;
+  --scene:#141D26; --ground:#2A3A2A; --road:#3A4046; --mark:#C9C6BA; --bldg:#3A4450; --tree:#3F6A35; --trunk:#5A4330; --car:#5C6876; --water:#2B4D63; --lawn:#33522E;
+  --t-site:#B08D63; --t-conc:#8C939B; --t-shell:#B5A68E; --t-steel:#6FA3DA; --t-roof:#D2D7DC; --t-env:#7FB8CF;
+  --t-mech:#4FC0A8; --t-elec:#E8B83E; --t-fire:#EE6A5E; --t-pave:#4A5056; --t-arch:#B99AD6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0F161D; --sheet:#151F29; --ink:#E6ECF2; --muted:#93A2B1; --rule:#2A3846; --band:#1B2733;
+  --crit:#F0675B; --live:#F2A443; --sel:#5EC0EC;
+  --scene:#141D26; --ground:#2A3A2A; --road:#3A4046; --mark:#C9C6BA; --bldg:#3A4450; --tree:#3F6A35; --trunk:#5A4330; --car:#5C6876; --water:#2B4D63; --lawn:#33522E;
+  --t-site:#B08D63; --t-conc:#8C939B; --t-shell:#B5A68E; --t-steel:#6FA3DA; --t-roof:#D2D7DC; --t-env:#7FB8CF;
+  --t-mech:#4FC0A8; --t-elec:#E8B83E; --t-fire:#EE6A5E; --t-pave:#4A5056; --t-arch:#B99AD6; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 15px/1.5 var(--f-body);margin:0}
+.wrap{max-width:1320px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.mono{font-family:var(--f-mono);font-size:.76rem;letter-spacing:.04em}
+h1{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.6rem,3.4vw,2.4rem);margin:4px 0 0;letter-spacing:-.01em;text-wrap:balance}
+h2{font-family:var(--f-disp);font-size:1rem;margin:0 0 8px}
+.eyebrow{color:var(--crit)}
+.sub{color:var(--muted);max-width:78ch;margin:8px 0 0}
+:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px}
+.tab{font:500 .78rem var(--f-mono);letter-spacing:.04em;border:1px solid var(--rule);background:var(--sheet);color:var(--muted);padding:6px 10px;cursor:pointer;border-radius:3px}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-top:10px}
+.card{text-align:left;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:10px 12px;cursor:pointer;border-radius:3px;font:inherit;display:flex;flex-direction:column;gap:2px}
+.card .mono{color:var(--muted)}
+.card[aria-current="true"]{border-color:var(--crit);box-shadow:inset 3px 0 0 var(--crit)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;margin-top:16px}
+.panel{background:var(--sheet);border:1px solid var(--rule)}
+.phead{padding:14px 14px 0}
+.phead h1{font-size:clamp(1.3rem,2.6vw,1.8rem)}
+#view{position:relative;aspect-ratio:16/10;max-width:100%;min-height:320px;background:var(--scene);margin-top:12px}
+#view canvas{display:block;width:100%;height:100%}
+.hud{position:absolute;left:10px;top:10px;display:flex;flex-direction:column;gap:4px;pointer-events:none}
+.hud .dd{font-family:var(--f-disp);font-weight:800;font-size:1.2rem;background:color-mix(in srgb,var(--sheet) 82%,transparent);padding:3px 8px;border:1px solid var(--rule)}
+.hud .st{background:color-mix(in srgb,var(--sheet) 82%,transparent);padding:2px 8px;border:1px solid var(--rule)}
+.tools{position:absolute;right:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.btn{font:500 .76rem var(--f-mono);letter-spacing:.04em;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:6px 10px;cursor:pointer;border-radius:3px}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.btn.crit[aria-pressed="true"]{background:var(--crit);border-color:var(--crit);color:#fff}
+.timebar{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--rule);flex-wrap:wrap}
+.timebar input[type=range]{flex:1 1 260px;accent-color:var(--crit);min-width:0}
+.timebar select{font:500 .76rem var(--f-mono);background:var(--sheet);color:var(--ink);border:1px solid var(--rule);padding:5px}
+.side{display:flex;flex-direction:column;min-width:0}
+.side section{padding:14px;border-bottom:1px solid var(--rule)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.88rem}
+.kv span{color:var(--muted);font-family:var(--f-mono);font-size:.72rem;letter-spacing:.04em;padding-top:2px}
+.kv b{font-weight:500;font-variant-numeric:tabular-nums;min-width:0;overflow-wrap:anywhere}
+.pill{display:inline-block;font:500 .7rem var(--f-mono);padding:2px 7px;border-radius:2px;border:1px solid currentColor}
+.pill.c{color:var(--crit)} .pill.l{color:var(--live)} .pill.d{color:var(--muted)}
+.trades{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.trades label{display:flex;align-items:center;gap:6px;font-size:.84rem;cursor:pointer}
+.trades i{width:12px;height:12px;border-radius:2px;display:inline-block;flex:none}
+.hint{color:var(--muted);font-size:.82rem}
+.gantt{margin-top:14px}
+.ghead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:10px 12px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.gscroll{max-height:430px;overflow:auto}
+#gsvg{display:block;min-width:820px;width:100%}
+#gsvg text{font-family:var(--f-mono);font-size:10px;fill:var(--muted)}
+#gsvg .nm{fill:var(--ink)}
+#gsvg .row{cursor:pointer}
+.err{padding:20px;color:var(--crit)}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+</style>
+<style>/* Monolith skin */
+:root{--paper:#f2eee7;--sheet:#f8f5ef;--ink:#242726;--rule:#d0c9be;--band:#e4ddd1;--ui-muted:#55564f;--accent:#5f4630;
+ --f-disp:Georgia,"Times New Roman",serif;--f-body:Arial,"Segoe UI",sans-serif;--f-mono:ui-monospace,Consolas,"Courier New",monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#191d1c;--sheet:#242726;--ink:#ede9e0;--rule:#3f433e;--band:#2b2f2d;--ui-muted:#b9b9b1;--accent:#d4bda4}}
+:root[data-theme="dark"]{--paper:#191d1c;--sheet:#242726;--ink:#ede9e0;--rule:#3f433e;--band:#2b2f2d;--ui-muted:#b9b9b1;--accent:#d4bda4}
+h1,h2{font-family:var(--f-disp);font-weight:400}h2{font-size:1.15rem}
+.eyebrow{color:var(--accent)}
+.sub,.hint,.card .mono,.kv span,.tab{color:var(--ui-muted)}#gsvg text{fill:var(--ui-muted)}#gsvg .nm{fill:var(--ink)}
+.tab,.card,.btn,.timebar select,.pill{border-radius:0}
+.tab[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.card[aria-current="true"]{border-color:#a78d73;box-shadow:inset 3px 0 0 #a78d73}
+.card:hover,.tab:hover{border-color:#a78d73}
+.hud .dd{font-weight:400}
+.timebar input[type=range]{accent-color:#a78d73}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.mh{background:#1b1f1d;border-bottom:1px solid #3f433e}
+.mh-in{max-width:1320px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:space-between;gap:14px}
+.mh-brand{display:flex;align-items:center;gap:10px;color:#f2eee7;text-decoration:none}
+.mh-brand b{display:block;font:400 17px/1.1 Georgia,serif;letter-spacing:.06em}
+.mh-brand small{display:block;font:700 9px Arial,sans-serif;letter-spacing:.28em;color:#cbb79e;margin-top:3px}
+.mh-nav{display:flex;gap:18px;align-items:center}
+.mh-nav a{color:#e4e0d8;font:700 11px Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+.mh-nav a:hover{color:#d4bda4}.mh-nav .mh-cta{border:1px solid #a78d73;padding:10px 12px}
+.mh :focus-visible,.mh-hero :focus-visible{outline-color:#d4bda4}
+.mh-hero{background:#242726;color:#ede9e0;border-bottom:1px solid #3f433e}
+.mh-hero-in{max-width:1320px;margin:0 auto;padding:40px max(16px,env(safe-area-inset-right,0px)) 34px max(16px,env(safe-area-inset-left,0px))}
+.mh-hero .eyebrow{color:#cbb79e;font:700 11px Arial,sans-serif;letter-spacing:.24em;margin:0}
+.mh-hero h1{font:400 clamp(2.2rem,5vw,3.6rem)/1.05 Georgia,serif;color:#f2eee7;margin:10px 0 0}
+.mh-hero h1 em{color:#a78d73}
+.mh-hero .sub{color:#c9c6bd;max-width:78ch;margin:14px 0 0}
+@media(max-width:760px){.mh-nav .mh-hide{display:none}.mh-hero-in{padding-top:26px;padding-bottom:22px}}
+.mh-short{display:none}
+#view .tools{top:auto;bottom:10px;left:10px;right:10px;justify-content:flex-start}
+@media(max-width:600px){#view .tools{bottom:8px;left:8px;right:8px;gap:4px}#view .tools .btn{padding:5px 7px;font-size:.68rem}.hud .dd{font-size:1rem}.hud .st{font-size:.66rem}}
+@media(max-width:430px){.mh-brand span{display:none}.mh-nav{gap:12px}.mh-long{display:none}.mh-short{display:inline}.mh-nav a{letter-spacing:.08em}}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap"><link rel="stylesheet" href="../../assets/css/rtl.css?v=20261127">
+</head>
+<body>
+<header class="mh"><div class="mh-in"><a class="mh-brand" href="../index.html" aria-label="أحمد حسام، التحكم في المشاريع: الصفحة الرئيسية"><img src="../../assets/branding/ahmed_hossam_mark_on_dark.png" width="40" height="35" alt=""><span><b>أحمد حسام</b><small>التحكم في المشاريع</small></span></a>
+<nav class="mh-nav" aria-label="روابط الموقع"><a href="../4d.html">عن النمذجة رباعية الأبعاد</a><a class="mh-hide" href="../projects.html">المشاريع</a><a class="mh-hide" href="../samples.html">التقارير</a><a class="lang-switch" href="../../4d/index.html" hreflang="en" lang="en" style="font-family:Arial,sans-serif!important">English</a><a class="mh-cta" href="../index.html#contact"><span class="mh-long">ناقش مشروعك</span><span class="mh-short">تواصل</span></a></nav></div></header>
+
+
+<section class="mh-hero"><div class="mh-hero-in"><p class="eyebrow mono">نماذج توضيحية رباعية الأبعاد · LOD 350 · مرتبطة بالبرامج الزمنية</p><h1>معرض النماذج <em>رباعية الأبعاد.</em></h1><p class="sub">نماذج توضيحية، ثلاثة لكل قطاع، أُعدّ كل منها من نوع الأعمال الموجودة في مشاريعي. يرتبط كل عنصر بنشاط في برنامجه المرجعي، فيُبنى النموذج وفق البرنامج الزمني كلما تحرك تاريخ البيانات. أسماء الأنشطة بالإنجليزية كما تظهر في P6.</p></div></section>
+<div class="wrap">
+  <div class="tabs" id="tabs" role="group" aria-label="القطاع"></div>
+  <div class="cards" id="cards"></div>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="phead"><p class="mono eyebrow" id="pcode">—</p><h1 id="ptitle">—</h1><p class="sub" id="psub"></p></div>
+      <div id="view" role="img" aria-label="النموذج ثلاثي الأبعاد عند تاريخ البيانات المحدد">
+        <div class="hud"><span class="dd" id="ddlab">—</span><span class="st mono" id="stat">—</span></div>
+        <div class="tools">
+          <button class="btn crit" id="bCrit" type="button" aria-pressed="false">المسار الحرج</button>
+          <button class="btn" id="bRoof" type="button" aria-pressed="true">إخفاء السقف</button>
+          <button class="btn" id="bGhost" type="button" aria-pressed="true">إظهار الأعمال المتبقية</button>
+          <button class="btn" id="bReset" type="button">إعادة ضبط العرض</button>
+        </div>
+      </div>
+      <div class="timebar">
+        <button class="btn" id="bPlay" type="button" aria-label="تشغيل البرنامج الزمني">▶ تشغيل</button>
+        <label class="mono" for="slider">تاريخ البيانات</label>
+        <input id="slider" type="range" min="0" max="100" step="1" value="0">
+        <select id="speed" aria-label="سرعة التشغيل"><option value="1">يوم لكل إطار</option><option value="3" selected>3 أيام لكل إطار</option><option value="7">أسبوع لكل إطار</option></select>
+      </div>
+    </div>
+    <aside class="panel side">
+      <section aria-live="polite"><h2>النشاط المحدد</h2><div id="info" class="hint">اضغط على أي عنصر في النموذج، أو أي شريط في مخطط جانت.</div></section>
+      <section><h2>التخصصات</h2><div class="trades" id="trades"></div></section>
+      <section><h2>ملخص البرنامج الزمني</h2><div class="kv" id="summary"></div></section>
+    </aside>
+  </div>
+  <div class="panel gantt">
+    <div class="ghead"><span class="mono" style="color:var(--crit)">برنامج مرجعي · علاقات نهاية إلى بداية · تقويم 5 أيام</span><span class="hint">الأشرطة الحمراء على المسار الحرج (فائض كلي صفر)، والخط المتقطع هو تاريخ البيانات.</span></div>
+    <div class="gscroll"><svg id="gsvg" role="img" aria-label="مخطط جانت للبرنامج المرجعي"></svg></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>window.P4D = [];</script>
+<script>
+/* Shared geometry helpers + Federal and Healthcare demonstration models.
+   Item format: [x, y, z, sizeX, sizeY, sizeZ, rotX, rotY, rotZ] in metres, y up. */
+window.H = (function(){
+  const R = (a, b, s) => { const o = []; for (let x = a; x <= b + 1e-6; x += s) o.push(+x.toFixed(3)); return o; };
+  const PI2 = Math.PI / 2;
+  return {
+    R,
+    // wall segments around a rectangle, revealed course by course (lift = course height)
+    courses(x0, z0, x1, z1, y0, h, lift, seg, t){
+      const o = [];
+      for (let y = y0; y < y0 + h - 1e-6; y += lift) {
+        const hh = Math.min(lift, y0 + h - y), yc = y + hh / 2;
+        R(x0 + seg / 2, x1 - seg / 2, seg).forEach(x => { o.push([x, yc, z0, seg, hh, t]); o.push([x, yc, z1, seg, hh, t]); });
+        R(z0 + seg / 2, z1 - seg / 2, seg).forEach(z => { o.push([x0, yc, z, t, hh, seg]); o.push([x1, yc, z, t, hh, seg]); });
+      }
+      return o;
+    },
+    // one ring of full-height panels (precast, curtain wall, metal panel)
+    ring(x0, z0, x1, z1, y0, h, seg, t){
+      const o = [], yc = y0 + h / 2;
+      R(x0 + seg / 2, x1 - seg / 2, seg).forEach(x => { o.push([x, yc, z0, seg * .98, h, t]); o.push([x, yc, z1, seg * .98, h, t]); });
+      R(z0 + seg / 2, z1 - seg / 2, seg).forEach(z => { o.push([x0, yc, z, t, h, seg * .98]); o.push([x1, yc, z, t, h, seg * .98]); });
+      return o;
+    },
+    cols(xs, zs, y0, h, s){ const o = []; xs.forEach(x => zs.forEach(z => o.push([x, y0 + h / 2, z, s || .5, h, s || .5]))); return o; },
+    pads(xs, zs, s, d){ const o = []; xs.forEach(x => zs.forEach(z => o.push([x, -(d || .8) / 2, z, s || 2.4, d || .8, s || 2.4]))); return o; },
+    // slab cast in strips along x
+    slab(x0, x1, z0, z1, y, th, strip){ return R(x0 + strip / 2, x1 - strip / 2, strip).map(x => [x, y + th / 2, (z0 + z1) / 2, strip, th, z1 - z0]); },
+    // joists spanning x (between girders) at spacing along z
+    joists(x0, x1, z0, z1, y, sp, bay){ const o = []; R(x0 + bay / 2, x1 - bay / 2, bay).forEach(x => R(z0 + sp / 2, z1 - sp / 2, sp).forEach(z => o.push([x, y, z, bay, .3, .12]))); return o; },
+    pipeX(x0, x1, y, z, r){ return [(x0 + x1) / 2, y, z, r * 2, x1 - x0, r * 2, 0, 0, PI2]; },
+    pipeZ(z0, z1, y, x, r){ return [x, y, (z0 + z1) / 2, r * 2, z1 - z0, r * 2, PI2, 0, 0]; },
+    tank(x, z, r, h, y){ return [x, (y || 0) + h / 2, z, r * 2, h, r * 2]; },
+    // standard multi-storey frame: per level columns + slab, returns {cols:[...per level], slabs:[...per level]}
+    frame(x0, x1, z0, z1, bx, bz, levels, fh, strip){
+      const xs = R(x0, x1, bx), zs = R(z0, z1, bz), cols = [], slabs = [];
+      for (let l = 0; l < levels; l++) { cols.push(this.cols(xs, zs, l * fh, fh - .25, .6)); slabs.push(this.slab(x0 - .5, x1 + .5, z0 - .5, z1 + .5, (l + 1) * fh - .25, .25, strip)); }
+      return {cols, slabs};
+    },
+    // existing building (context) with optional hide-when
+    exist(x, z, w, d, h){ return [x, h / 2 - .2, z, w, h, d]; },
+  };
+})();
+
+/* ---------------- FEDERAL ---------------- */
+P4D.push({
+  key:"fed-maintenance", sector:"fed", code:"US-FED · DEMO 1", kind:"منشأة صيانة لاحتياطي الجيش، إنشاء جديد",
+  title:"منشأة صيانة المركبات العسكرية",
+  sub:"ورشة صيانة بحوائط حاملة من البلوك الخرساني، بأجنحة عالية، وجناح إداري من طابقين، وأرضيات مشعة للتدفئة، وسقف من الكمرات المعدنية. ترتفع أعمال المباني مدماكاً بعد مدماك بعد صب البلاطة.",
+  ntp:[2026, 2, 2], dd:.55, cam:{p:[-70, 95, -95], t:[62, 0, 35]},
+  context:{type:"industrial", bounds:[-5, -30, 128, 75], seed:5, fenceUntil:"V9010"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    a("A1000","Notice to proceed",0);
+    a("P1010","Preconstruction submittals and Government approval",40,["A1000"],"proc");
+    a("A1020","Mobilization and site demolition",15,["A1000"],"site");
+    a("A1030","Earthwork and building pad",20,["A1020"],"site");
+    a("A1040","Site utilities",30,["A1030"],"site");
+    a("C2010","Footings and foundation walls",18,["A1030","P1010"],"conc");
+    a("M7005","Radiant floor tubing, maintenance bays",10,["C2010"],"mech");
+    a("C2020","Underslab utilities and slab on grade",15,["C2010","M7005"],"conc");
+    a("M3010","CMU bearing walls, maintenance bays",30,["C2020"],"shell");
+    a("M3020","CMU walls, admin wing",20,["C2020"],"shell");
+    a("S4010","Steel girders and roof joists",18,["M3010"],"steel");
+    a("S4020","Admin wing second floor and roof steel",10,["M3020"],"steel");
+    a("R5010","Roof deck and roofing, high bay",20,["S4010"],"roof");
+    a("R5020","Roof deck and roofing, admin wing",10,["S4020"],"roof");
+    a("E6010","Overhead doors and storefront",15,["M3010","M3020"],"env");
+    a("M7010","HVAC units, exhaust and ductwork",30,["R5010","R5020"],"mech");
+    a("EL7020","Electrical distribution and lighting",30,["R5010"],"elec");
+    a("F7030","Fire sprinkler system",20,["R5010"],"fire");
+    a("I8010","Interior framing and finishes, admin wing",35,["R5020"],"arch");
+    a("V9010","Paving, apron and parking",25,["A1040","M3010"],"pave");
+    a("X9010","Testing and commissioning",15,["M7010","EL7020","F7030"],"mech");
+    a("X9020","Substantial completion",0,["X9010","I8010","V9010","E6010"]);
+    g.box("A1030", R(0, 120, 12).map(x => [x + 6, -.7, 35, 12, 1, 80]));
+    g.cyl("A1040", [H.pipeX(-5, 125, -.6, -8, .5), H.pipeZ(-8, 70, -.6, -4, .5), H.pipeX(90, 125, -.6, 45, .4)]);
+    const ft = [].concat(H.pads(R(10, 90, 8), [10, 35, 60], 2.2, .8), H.ring(10, 10, 90, 60, -.9, 1, 8, .9), H.ring(90, 10, 116, 40, -.9, 1, 6.5, .9));
+    g.box("C2010", ft);
+    g.cyl("M7005", [].concat(...R(12, 88, 2).map(x => [H.pipeZ(11, 59, .02, x, .05)])));
+    g.box("C2020", [].concat(H.slab(10, 90, 10, 60, -.05, .2, 8), H.slab(90, 116, 10, 40, -.05, .2, 6.5)));
+    g.box("M3010", H.courses(10, 10, 90, 60, 0, 9.5, 1.2, 4, .3));
+    g.box("M3020", H.courses(90, 10, 116, 40, 0, 7.5, 1.2, 3.25, .3));
+    g.box("S4010", [].concat(H.cols(R(18, 82, 16), [35], 0, 9.2, .45), [[50, 9.2, 35, 80, .9, .5]], H.joists(10, 90, 10, 60, 9.5, 1.6, 80).map(j => [50, 9.6, j[2], 80, .3, .12])));
+    g.box("S4020", [[103, 3.8, 25, 26, .3, 30], ...H.joists(90, 116, 10, 40, 7.6, 1.6, 26)]);
+    g.box("R5010", H.slab(10, 90, 10, 60, 9.8, .15, 4), {roof:true});
+    g.box("R5020", H.slab(90, 116, 10, 40, 7.8, .15, 3.25), {roof:true});
+    g.box("E6010", [].concat(R(18, 82, 12).map(x => [x, 3, 10.05, 5, 6, .3]), [[103, 1.5, 10.1, 8, 3, .2]]));
+    g.box("M7010", [[30, 10.6, 25, 4, 1.5, 3], [55, 10.6, 25, 4, 1.5, 3], [75, 10.6, 45, 4, 1.5, 3], [103, 8.5, 25, 3, 1.2, 2.5], [50, 8.2, 22, 70, .6, .6], [50, 8.2, 48, 70, .6, .6]], {roof:true});
+    g.box("EL7020", [[88, 1.2, 58, 1.6, 2.2, .6], [92, 1.2, 38, 1.2, 2, .5], ...R(15, 85, 10).map(x => [x, 8.6, 35, 1.2, .1, 50])]);
+    g.cyl("F7030", R(14, 86, 6).map(x => H.pipeZ(11, 59, 8.9, x, .06)));
+    g.box("I8010", [].concat(R(94, 112, 4.5).map(x => [x, 1.6, 25, .15, 3.2, 28]), [[103, 1.6, 33, 25, 3.2, .15]], R(94, 112, 6).map(x => [x, 5.4, 25, .15, 3, 28])));
+    g.box("V9010", [].concat(R(0, 120, 10).map(x => [x + 5, .02, -14, 10, .12, 22]), R(14, 86, 12).map(x => [x, .03, 5, 12, .15, 8])));
+    g.ctx("car", "box", R(4, 118, 3.2).filter((x, i) => i % 3).map(x => [x, -.1, -14, 1.8, 1.4, 4.4]), {showWhen:"X9020"});
+  }
+});
+
+P4D.push({
+  key:"fed-marine", sector:"fed", code:"US-FED · DEMO 2", kind:"منشأة فيدرالية من ثلاثة مستويات من الخرسانة المصبوبة في الموقع",
+  title:"منشأة وحدة بحرية على الواجهة المائية",
+  sub:"مبنى من ثلاثة مستويات من الخرسانة المصبوبة في الموقع على واجهة مائية. تبدأ الستائر المعدنية والأعمال المدنية أولاً، ثم يُبنى الهيكل مستوى بعد مستوى، مع تدعيم كل بلاطة ومعاينتها قبل الرفعة التالية.",
+  ntp:[2026, 0, 5], dd:.5, cam:{p:[-55, 55, -60], t:[22, 4, 25]},
+  context:{type:"rural", bounds:[-12, -10, 55, 70], seed:9, fenceUntil:"V9010", clear:(x, z) => z > 74},
+  setup(g){
+    const {R} = H, a = g.act.bind(g), f = H.frame(0, 40, 0, 30, 8, 7.5, 3, 4.5, 4);
+    a("A1000","Notice to proceed",0);
+    a("P1010","Preconstruction submittals and approvals",50,["A1000"],"proc");
+    a("A1020","Trailer relocation and temporary facilities",20,["A1000"],"site");
+    a("A1030","Sheet piles and shoreline protection",30,["A1020"],"site");
+    a("A1040","Off-site and site utilities",40,["A1020"],"site");
+    a("C2010","Pile caps and grade beams",25,["A1030","P1010"],"conc");
+    a("C2020","Ground level columns and walls",15,["C2010"],"conc");
+    a("C2030","Level 1 deck, shored",15,["C2020"],"conc");
+    a("C2040","Level 1 columns",12,["C2030"],"conc");
+    a("C2050","Level 2 deck, reshored",15,["C2040"],"conc");
+    a("C2060","Level 2 columns",12,["C2050"],"conc");
+    a("C2070","Roof deck",15,["C2060"],"conc");
+    a("S4010","Steel stairs and canopy",10,["C2070"],"steel");
+    a("R5010","Roofing",12,["C2070"],"roof");
+    a("E6010","Exterior envelope and windows",35,["C2060"],"env");
+    a("M7010","Mechanical and plumbing rough-in by level",40,["C2050"],"mech");
+    a("EL7020","Electrical and low voltage",35,["C2050"],"elec");
+    a("I8010","Interior finishes",40,["E6010","M7010"],"arch");
+    a("V9010","Site paving and boat dock",25,["A1040","C2070"],"pave");
+    a("X9010","Inspections and Government acceptance",15,["I8010","R5010","V9010","EL7020","S4010"]);
+    a("X9020","Completion",0,["X9010"]);
+    g.ctx("water", "box", [[20, -1.05, 200, 700, .1, 250]]);
+    g.box("A1020", [[-6, 1.3, 55, 12, 2.6, 3.5], [-6, 1.3, 61, 12, 2.6, 3.5]]);
+    g.box("A1030", R(-20, 60, 1.2).map(x => [x, 0, 75, 1.1, 3, .25]));
+    g.cyl("A1040", [H.pipeX(-30, 45, -.6, -6, .4), H.pipeZ(-6, 40, -.6, 44, .4)]);
+    g.box("C2010", [].concat(H.pads(R(0, 40, 8), R(0, 30, 7.5), 2.6, 1), H.ring(0, 0, 40, 30, -.6, .9, 8, .8)));
+    g.box("C2020", [].concat(f.cols[0], H.ring(0, 0, 40, 30, 0, 4.25, 8, .3).filter((w, i) => i % 3 === 0)));
+    g.box("C2030", f.slabs[0]); g.box("C2040", f.cols[1]); g.box("C2050", f.slabs[1]); g.box("C2060", f.cols[2]); g.box("C2070", f.slabs[2]);
+    g.box("S4010", [[42, 6.75, 15, 3, 13.5, 3.5], [20, 3.2, -3, 14, .3, 5]]);
+    g.box("R5010", H.slab(-.5, 40.5, -.5, 30.5, 13.55, .15, 4), {roof:true});
+    g.box("E6010", [].concat(...[0, 1, 2].map(l => H.ring(0, 0, 40, 30, l * 4.5 + .1, 4.1, 4, .2))));
+    g.box("M7010", [].concat(...[0, 1, 2].map(l => [[20, l * 4.5 + 3.7, 10, 36, .4, .4], [20, l * 4.5 + 3.7, 20, 36, .4, .4]])));
+    g.box("EL7020", [[38, 1.1, 28, 1.6, 2.2, .6], ...[0, 1, 2].map(l => [20, l * 4.5 + 3.9, 15, 36, .1, .3])]);
+    g.box("I8010", [].concat(...[0, 1, 2].map(l => R(6, 34, 7).map(x => [x, l * 4.5 + 1.9, 15, .15, 3.6, 26]))));
+    g.box("V9010", [].concat(R(-10, 50, 10).map(x => [x + 5, .02, -18, 10, .12, 14]), [[20, .1, 85, 6, .3, 22], [20, .1, 96, 24, .3, 4]]));
+    g.ctx("car", "box", [[22, 1, 92, 2.8, 1.2, 9], [12, 1, 92, 2.6, 1.1, 8]], {showWhen:"V9010"});
+  }
+});
+
+P4D.push({
+  key:"fed-printing", sector:"fed", code:"US-FED · DEMO 3", kind:"تجديد على مراحل واستبدال السقف",
+  title:"تجديد مصنع طباعة فيدرالي",
+  sub:"مبنى صناعي مشغول يُجدَّد منطقة بعد منطقة بينما يُستبدل السقف في مسار موازٍ. تختفي أجزاء السقف القديم والمعدات القائمة مع انتهاء الهدم، وتظهر الأعمال الجديدة مكانها.",
+  ntp:[2025, 9, 13], dd:.42, cam:{p:[-90, 120, -110], t:[75, 0, 50]},
+  context:{type:"industrial", bounds:[-5, -10, 155, 108], seed:3},
+  setup(g){
+    const {R} = H, a = g.act.bind(g), zx = [[0, 50], [50, 100], [100, 150]];
+    a("A1000","Notice to proceed",0);
+    a("A1010","Mobilization, site management and pre-work submittals",20,["A1000"],"site");
+    ["1","2","3","4"].forEach((k, i) => a(`R510${k}`,`Roof replacement, bay ${k}`,28,[i ? `R510${i}` : "A1010"],"roof"));
+    a("D2010","Asbestos abatement, Zone A",20,["A1010"],"site");
+    a("D2020","Interior and MEP demolition, Zone A",15,["D2010"],"site");
+    a("D2030","Structural and MEP demolition, Zones B and C",25,["D2020"],"site");
+    a("C2040","Press foundations",25,["D2030"],"conc");
+    a("C2050","Interior concrete and air-barrier spray foam",30,["D2030"],"conc");
+    a("I8010","Metal stud framing and in-slab plumbing",20,["C2050"],"arch");
+    a("M7010","MEP rough-in and ductwork",50,["I8010"],"mech");
+    a("F7020","Fire suppression rough-in",30,["I8010"],"fire");
+    a("I8020","Insulation, drywall, paint and flooring",40,["M7010","F7020"],"arch");
+    a("M7030","HVAC equipment and plumbing trim",25,["I8020","R5104"],"mech");
+    a("EL7040","Electrical gear and panels",30,["M7010"],"elec");
+    a("A1050","Civil site utilities",20,["D2030"],"site");
+    a("X9010","Commissioning and closeout",20,["M7030","EL7040","A1050","C2040"]);
+    a("X9020","Project end",0,["X9010"]);
+    // existing building shell (context) and old roof bays that go as each new bay is installed
+    g.ctx("bldg", "box", H.ring(0, 0, 150, 100, 0, 11, 10, .4));
+    [0, 1, 2, 3].forEach(i => g.ctx("bldg", "box", [[18.75 + i * 37.5, 11.1, 50, 37.5, .3, 100]], {hideWhen:`R510${i + 1}`}));
+    g.ctx("bldg", "box", [].concat(R(8, 45, 9).map(x => [x, 1.5, 30, 6, 3, 10]), R(8, 45, 9).map(x => [x, 1.5, 70, 6, 3, 10])), {hideWhen:"D2020"});
+    g.ctx("bldg", "box", [].concat(R(58, 140, 10).map(x => [x, 2, 30, 7, 4, 12]), R(58, 140, 10).map(x => [x, 2, 70, 7, 4, 12])), {hideWhen:"D2030"});
+    [0, 1, 2, 3].forEach(i => g.box(`R510${i + 1}`, R(i * 37.5 + 2.5, i * 37.5 + 35, 5).map(x => [x, 11.4, 50, 5, .25, 100]), {roof:true}));
+    g.box("D2010", [[25, .6, 50, 46, 1.2, 96]].map(v => v), {});
+    g.box("D2020", R(5, 45, 10).map(x => [x, .3, 50, 9, .6, 90]));
+    g.box("D2030", R(55, 145, 10).map(x => [x, .3, 50, 9, .6, 90]));
+    g.box("C2040", [].concat(R(65, 135, 14).map(x => [x, .7, 35, 9, 1.4, 14]), R(65, 135, 14).map(x => [x, .7, 70, 9, 1.4, 14])));
+    g.box("C2050", H.slab(1, 149, 1, 99, -.2, .25, 10));
+    g.box("I8010", [].concat(R(10, 140, 10).map(x => [x, 2.5, 8, .15, 5, 14]), R(20, 130, 22).map(x => [x, 2.5, 92, .15, 5, 14])));
+    g.box("M7010", [].concat(R(15, 135, 30).map(x => [x, 9.2, 50, 1.2, .9, 96]), [[75, 9.2, 15, 146, .9, 1.2], [75, 9.2, 85, 146, .9, 1.2]]));
+    g.cyl("F7020", R(6, 144, 6).map(x => H.pipeZ(2, 98, 10.2, x, .07)));
+    g.box("I8020", [].concat(R(10, 140, 10).map(x => [x, 2.5, 8, .3, 5, 14.2]), [[75, .03, 50, 148, .06, 98]]));
+    g.box("M7030", [[20, 12.3, 30, 5, 1.6, 4], [60, 12.3, 70, 5, 1.6, 4], [100, 12.3, 30, 5, 1.6, 4], [135, 12.3, 70, 5, 1.6, 4]], {roof:true});
+    g.box("EL7040", R(4, 24, 2.2).map(x => [x, 1.2, 97, 1.8, 2.3, .8]));
+    g.cyl("A1050", [H.pipeX(-10, 160, -.6, -6, .5), H.pipeZ(-6, 106, -.6, 156, .5)]);
+  }
+});
+
+/* ---------------- HEALTHCARE ---------------- */
+P4D.push({
+  key:"hc-hospital", sector:"hc", code:"US-HC · DEMO 1", kind:"توسعة مستشفى متعددة المراحل",
+  title:"توسعة مستشفى إقليمي",
+  sub:"إضافات بجوار مستشفى عامل: محطة طاقة مركزية أولاً، ثم إضافة من طابقين للجراحة ومعمل القسطرة، وتوسعة للطوارئ والرعاية المركزة، تُغلق كل منها بمعاينة الولاية الخاصة بها.",
+  ntp:[2026, 0, 12], dd:.5, cam:{p:[-110, 120, -120], t:[60, 5, 45]},
+  context:{type:"campus", bounds:[-20, -20, 150, 115], seed:21, fenceUntil:"X9020"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    a("A1000","Notice to proceed",0);
+    a("P1010","Permitting and state plan review",60,["A1000"],"proc");
+    a("P1020","Chiller, cooling tower and switchgear procurement",120,["A1000"],"proc");
+    a("A1030","Site mobilization, temporary access and utility relocations",30,["A1000"],"site");
+    a("C2010","CEP foundations and slab",20,["A1030","P1010"],"conc");
+    a("S4010","CEP structural steel and roof",20,["C2010"],"steel");
+    a("M7010","CEP chillers, boilers and cooling towers",40,["S4010","P1020"],"mech");
+    a("EL7010","CEP switchgear and generators",30,["S4010","P1020"],"elec");
+    a("C2110","Surgery addition foundations",20,["A1030","P1010"],"conc");
+    a("S4110","Surgery addition steel, two levels",25,["C2110"],"steel");
+    a("C2120","Surgery addition decks",15,["S4110"],"conc");
+    a("E6110","Surgery addition envelope",35,["C2120"],"env");
+    a("M7110","Surgery and cath lab MEP and medical gas",50,["C2120","M7010"],"mech");
+    a("I8110","Surgery, cath lab and recovery interiors",50,["E6110","M7110"],"arch");
+    a("C2210","ED/ICU foundations",20,["C2110"],"conc");
+    a("S4210","ED/ICU steel, two levels",25,["C2210","S4110"],"steel");
+    a("C2220","ED/ICU decks",15,["S4210"],"conc");
+    a("E6210","ED/ICU envelope",35,["C2220"],"env");
+    a("M7210","ED/ICU MEP",50,["C2220","M7010"],"mech");
+    a("I8210","ED/ICU interiors",45,["E6210","M7210"],"arch");
+    a("F7010","Fire protection, both additions",40,["C2220"],"fire");
+    a("R5010","Roofing, both additions",20,["C2220"],"roof");
+    a("X9010","State inspection and occupancy, surgery addition",10,["I8110","F7010","R5010"]);
+    a("X9020","State inspection and occupancy, ED/ICU",10,["I8210","X9010","EL7010"]);
+    a("V9010","Drop-off, ambulance bay and paving",25,["X9010"],"pave");
+    a("X9030","Owner move-in",0,["X9020","V9010"]);
+    g.ctx("bldg", "box", [H.exist(50, 75, 90, 45, 22), H.exist(110, 90, 30, 30, 30)]);
+    g.box("A1030", [[20, .05, 30, 60, .1, 40], [115, .05, 25, 40, .1, 30]]);
+    g.box("C2010", [[125, .1, 25, 30, .4, 24]]);
+    g.box("S4010", [].concat(H.cols(R(110, 140, 7.5), R(13, 37, 6), 0, 8, .4), [[125, 8, 25, 30, .3, 24]]));
+    g.cyl("M7010", [...R(114, 136, 5.5).map(x => [x, 1.5, 18, 2.4, 3, 2.4, 0, 0, Math.PI / 2]), [118, 9.5, 32, 5, 3, 5], [130, 9.5, 32, 5, 3, 5]]);
+    g.box("EL7010", [[113, 1.2, 33, 6, 2.4, 1.5], [137, 1.6, 33, 5, 3.2, 2.6]]);
+    const add = (x0, x1, z0, z1, ids) => {
+      g.box(ids[0], [].concat(H.pads(R(x0, x1, 8), R(z0, z1, 8), 2.4, .9), H.ring(x0, z0, x1, z1, -.6, .8, 8, .8)));
+      g.box(ids[1], [].concat(H.cols(R(x0, x1, 8), R(z0, z1, 8), 0, 9.6, .45), [[(x0 + x1) / 2, 4.6, (z0 + z1) / 2, x1 - x0, .5, .4]]));
+      g.box(ids[2], [].concat(H.slab(x0, x1, z0, z1, 4.8, .2, 4), H.slab(x0, x1, z0, z1, 9.6, .2, 4)));
+      g.box(ids[3], [].concat(H.ring(x0, z0, x1, z1, .1, 4.6, 4, .2), H.ring(x0, z0, x1, z1, 5, 4.6, 4, .2)));
+      g.box(ids[4], [[(x0 + x1) / 2, 4.2, (z0 + z1) / 2, x1 - x0 - 2, .5, .5], [(x0 + x1) / 2, 9, (z0 + z1) / 2, x1 - x0 - 2, .5, .5], [x0 + 4, 11, z0 + 5, 4, 1.5, 3]]);
+      g.box(ids[5], [].concat(...[0, 4.8].map(y => R(x0 + 4, x1 - 4, 6).map(x => [x, y + 1.9, (z0 + z1) / 2, .15, 3.6, z1 - z0 - 3]))));
+    };
+    add(0, 48, 12, 52, ["C2110","S4110","C2120","E6110","M7110","I8110"]);
+    add(-10, 30, -20, 10, ["C2210","S4210","C2220","E6210","M7210","I8210"]);
+    g.cyl("F7010", [].concat(R(4, 44, 6).map(x => H.pipeZ(13, 51, 9.2, x, .06)), R(-6, 26, 6).map(x => H.pipeZ(-19, 9, 9.2, x, .06))));
+    g.box("R5010", [[24, 9.95, 32, 48.5, .2, 40.5], [10, 9.95, -5, 40.5, .2, 30.5]], {roof:true});
+    g.box("V9010", [].concat(R(35, 95, 10).map(x => [x, .02, -5, 10, .12, 30]), [[45, 2.6, 8, 14, .25, 8]]));
+  }
+});
+
+P4D.push({
+  key:"hc-pharma", sector:"hc", code:"US-HC · DEMO 2", kind:"مبنى منتجات دوائية نهائية",
+  title:"مبنى المنتجات الدوائية النهائية",
+  sub:"مبنى معدني من ثلاثة طوابق للتعبئة والتغليف. يرتفع الهيكل والبلاطات باكية بعد باكية، ثم يحمي الغلاف المبنى من المياه، وتتبعه حوائط الغرف النظيفة ومرافق العمليات ووحدات مناولة الهواء على السطح وصولاً إلى بدء تشغيل الأنظمة وجولات الفحص.",
+  ntp:[2025, 6, 7], dd:.5, cam:{p:[-80, 85, -95], t:[40, 6, 28]},
+  context:{type:"industrial", bounds:[-10, -15, 95, 70], seed:14, fenceUntil:"X9020"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g), f = H.frame(0, 80, 0, 50, 10, 10, 3, 5.5, 5);
+    a("A1000","Project start",0);
+    a("P1010","Design packages and long-lead procurement",80,["A1000"],"proc");
+    a("A1020","Site utilities and building pad",30,["A1000"],"site");
+    a("C2010","Foundations and slab on grade",30,["A1020"],"conc");
+    a("S4010","Structural steel frame, three levels",40,["C2010","P1010"],"steel");
+    a("C2020","Composite decks, levels 2 and 3",30,["S4010"],"conc");
+    a("R5010","Roof deck and membrane",20,["S4010"],"roof");
+    a("E6010","Insulated metal panel envelope",35,["C2020","R5010"],"env");
+    a("M7010","Rooftop air handlers and ductwork",45,["R5010"],"mech");
+    a("M7020","Process utilities: clean steam, WFI, chilled water",60,["C2020"],"mech");
+    a("EL7030","Electrical rooms and power distribution",50,["C2020"],"elec");
+    a("I8010","Cleanroom walls and ceilings",45,["E6010","M7010"],"arch");
+    a("F7040","Fire protection",35,["C2020"],"fire");
+    a("M7050","Equipment setting and connections",30,["I8010","M7020"],"mech");
+    a("X9010","Systems start-up",30,["M7050","EL7030","F7040"],"mech");
+    a("X9020","Walkdowns, punch list and certificate of occupancy",20,["X9010"]);
+    g.box("A1020", [[40, -.6, 25, 100, 1, 75]]);
+    g.box("C2010", [].concat(H.pads(R(0, 80, 10), R(0, 50, 10), 2.6, 1), H.slab(-.5, 80.5, -.5, 50.5, -.25, .25, 5)));
+    g.box("S4010", [].concat(...f.cols, ...[1, 2, 3].map(l => [[40, l * 5.5 - .6, 25, 80, .6, .4]]), H.joists(0, 80, 0, 50, 16.2, 2, 10)));
+    g.box("C2020", [].concat(f.slabs[0], f.slabs[1]));
+    g.box("R5010", f.slabs[2].map(s => [s[0], s[1] + .1, s[2], s[3], .25, s[5]]), {roof:true});
+    g.box("E6010", [].concat(...[0, 1, 2].map(l => H.ring(-.3, -.3, 80.3, 50.3, l * 5.5, 5.5, 5, .2))));
+    g.box("M7010", [[15, 17.8, 15, 10, 3, 5], [40, 17.8, 15, 10, 3, 5], [65, 17.8, 15, 10, 3, 5], [40, 17.6, 38, 60, 1.2, 1.2]], {roof:true});
+    g.cyl("M7020", [].concat(...[1, 2].map(l => [H.pipeX(2, 78, l * 5.5 + 4.2, 22, .18), H.pipeX(2, 78, l * 5.5 + 4.2, 23, .15), H.pipeX(2, 78, l * 5.5 + 4.2, 24, .2)]), [[6, 2.5, 44, 3, 5, 3]]));
+    g.box("EL7030", [[74, 2.6, 44, 10, 5, 10], ...R(66, 78, 3).map(x => [x, 1.2, 38, 1.4, 2.4, .6])]);
+    g.box("I8010", [].concat(...[0, 1, 2].map(l => [].concat(R(10, 70, 10).map(x => [x, l * 5.5 + 1.8, 12, .12, 3.4, 18]), [[40, l * 5.5 + 3.5, 12, 70, .1, 18]]))));
+    g.cyl("F7040", [].concat(...[0, 1, 2].map(l => R(5, 75, 7).map(x => H.pipeZ(1, 49, l * 5.5 + 4.9, x, .05)))));
+    g.cyl("M7050", [[20, 7, 10, 3, 2.5, 3], [32, 7, 10, 3, 2.5, 3], [48, 12.5, 10, 2.5, 2.2, 2.5], [60, 1.5, 10, 3, 2.6, 3]]);
+  }
+});
+
+P4D.push({
+  key:"hc-ferment", sector:"hc", code:"US-HC · DEMO 3", kind:"توسعة تخمير لمصنع تقنية حيوية",
+  title:"توسعة الطاقة الإنتاجية للتخمير",
+  sub:"منشأة عمليات مفتوحة بخزانات تخمير وحصاد، وغرفة كهرباء جاهزة، ومبنى استرداد. تبدأ المرافق المدفونة والبلاطات أولاً، ثم الهيكل المعدني وغرفة الكهرباء، ثم الخزانات وحوامل المواسير والتشغيل والاختبار.",
+  ntp:[2025, 4, 5], dd:.55, cam:{p:[-75, 70, -80], t:[35, 6, 25]},
+  context:{type:"industrial", bounds:[-10, -15, 90, 65], seed:31, fenceUntil:"X9020"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    a("A1000","Project start",0);
+    a("P1010","Tank and equipment procurement",110,["A1000"],"proc");
+    a("A1020","Electrical groundwork and underground plumbing",30,["A1000"],"site");
+    a("C2010","Foundations and slabs on grade",30,["A1020"],"conc");
+    a("S4010","Process structure steel",35,["C2010"],"steel");
+    a("S4020","Recovery building steel and roof",25,["C2010"],"steel");
+    a("EL7010","Electrical MCC e-house set and terminations",25,["C2010"],"elec");
+    a("M7010","Fermentation tanks set",20,["S4010","P1010"],"mech");
+    a("M7020","Harvest and mix tanks set",15,["S4010","P1010"],"mech");
+    a("M7030","Pipe rack and process piping",50,["M7010","M7020"],"mech");
+    a("E6010","Recovery building cladding",25,["S4020"],"env");
+    a("EL7020","Transformer energization",10,["EL7010"],"elec");
+    a("M7040","Mechanical completion and walkdowns",25,["M7030","EL7020","E6010"],"mech");
+    a("X9010","Commissioning and turnover",20,["M7040"]);
+    a("X9020","Project closeout",0,["X9010"]);
+    g.cyl("A1020", [H.pipeX(-5, 85, -.5, 20, .4), H.pipeX(-5, 85, -.5, 42, .3), H.pipeZ(-5, 60, -.5, 30, .4)]);
+    g.box("C2010", [].concat(H.slab(0, 40, 0, 30, -.2, .5, 5), H.slab(48, 80, 0, 40, -.2, .3, 4), [[20, .3, 45, 26, .6, 10]]));
+    g.box("S4010", [].concat(H.cols(R(0, 40, 8), R(0, 30, 10), 0, 18, .45), ...[6, 12, 18].map(y => [[20, y, 0, 40, .5, .4], [20, y, 10, 40, .5, .4], [20, y, 20, 40, .5, .4], [20, y, 30, 40, .5, .4]])));
+    g.box("S4020", [].concat(H.cols(R(48, 80, 8), R(0, 40, 10), 0, 11, .4), H.joists(48, 80, 0, 40, 11, 2, 32), [[64, 11.3, 20, 32.5, .2, 40.5]]));
+    g.box("EL7010", [[64, 2, 54, 16, 4, 5]]);
+    g.cyl("M7010", [H.tank(8, 8, 3, 14, .3), H.tank(20, 8, 3, 14, .3), H.tank(32, 8, 3, 14, .3)]);
+    g.cyl("M7020", [H.tank(10, 23, 2, 8, .3), H.tank(22, 23, 2, 8, .3), H.tank(32, 23, 1.6, 6, .3), H.tank(14, 45, 3.5, 9, .6)]);
+    g.cyl("M7030", [H.pipeX(-2, 47, 12.6, 15, .2), H.pipeX(-2, 47, 12.6, 16, .16), H.pipeX(-2, 47, 13.2, 15.5, .25), H.pipeZ(-2, 40, 12.6, 44, .2), H.pipeX(40, 64, 6, 50, .2)]);
+    g.box("E6010", H.ring(48, 0, 80, 40, 0, 11, 4, .2));
+    g.box("EL7020", [[74, 1.5, 54, 3, 3, 3]]);
+  }
+});
+
+</script>
+<script>
+/* Education and Water demonstration models. */
+
+/* ---------------- EDUCATION ---------------- */
+P4D.push({
+  key:"edu-reconstruction", sector:"edu", code:"US-EDU · DEMO 1", kind:"إعادة بناء مدرسة على تسلسلين",
+  title:"إعادة بناء حرم مدرسة إعدادية",
+  sub:"يبني التسلسل الأول حرماً جديداً بجوار المدرسة التي تظل مفتوحة: مبنى إداري، ومبنى متعدد الأغراض، ومبنى فصول من طابقين. وبعد الانتقال، يهدم التسلسل الثاني الحرم القديم ويحوله إلى ملاعب ومواقف.",
+  ntp:[2026, 1, 23], dd:.62, cam:{p:[-110, 120, -130], t:[70, 0, 60]},
+  context:{type:"campus", bounds:[-10, -10, 165, 140], seed:44, fenceUntil:"X9030"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    a("A1000","Notice to proceed",0);
+    a("A1010","Early works: temporary fencing, utilities and haul road",30,["A1000"],"site");
+    a("A1020","Sequence 1 sitework and building pads",35,["A1010"],"site");
+    const B = [["1","Administration building",[0, 40, 0, 26], 1],["2","Multipurpose building",[50, 85, 0, 34], 1],["3","Two-storey classroom building",[0, 80, 45, 70], 2]];
+    B.forEach(([k, n, [x0, x1, z0, z1], lv], i) => {
+      const fh = 4.4, top = lv * fh + (k === "2" ? 3 : 0);
+      a(`C2${k}10`,`${n}: foundations and slab`,20,["A1020"].concat(i ? [`C2${i}10`] : []),"conc");
+      a(`S4${k}10`,`${n}: steel frame${lv > 1 ? " and second-floor deck" : ""}`,lv > 1 ? 30 : 20,[`C2${k}10`],"steel");
+      a(`M3${k}10`,`${n}: masonry and envelope`,lv > 1 ? 40 : 30,[`S4${k}10`],"shell");
+      a(`R5${k}10`,`${n}: roof deck and roofing`,15,[`S4${k}10`],"roof");
+      a(`M7${k}10`,`${n}: MEP rough-in`,lv > 1 ? 45 : 30,[`R5${k}10`],"mech");
+      a(`I8${k}10`,`${n}: interiors and finishes`,lv > 1 ? 50 : 35,[`M3${k}10`,`M7${k}10`],"arch");
+      a(`X9${k}10`,`${n}: turnover`,0,[`I8${k}10`]);
+      g.box(`C2${k}10`, [].concat(H.ring(x0, z0, x1, z1, -.7, .8, 6, .8), H.slab(x0, x1, z0, z1, -.15, .2, 5)));
+      g.box(`S4${k}10`, [].concat(H.cols(R(x0, x1, 8), R(z0, z1, z1 - z0 > 30 ? 8.5 : z1 - z0), 0, top, .4), lv > 1 ? H.slab(x0, x1, z0, z1, fh - .2, .2, 5) : [], H.joists(x0, x1, z0, z1, top, 1.8, x1 - x0)));
+      g.box(`M3${k}10`, H.courses(x0, z0, x1, z1, 0, top, 1.4, 5, .3));
+      g.box(`R5${k}10`, H.slab(x0 - .3, x1 + .3, z0 - .3, z1 + .3, top + .2, .15, 5), {roof:true});
+      g.box(`M7${k}10`, [[(x0 + x1) / 2, top - .6, (z0 + z1) / 2, x1 - x0 - 2, .6, .6], [x0 + 6, top + 1, z0 + 6, 4, 1.4, 3], [x1 - 6, top + 1, z1 - 6, 4, 1.4, 3]]);
+      g.box(`I8${k}10`, [].concat(...R(0, lv - 1, 1).map(l => R(x0 + 5, x1 - 5, 7).map(x => [x, l * fh + 1.7, (z0 + z1) / 2, .15, 3.4, z1 - z0 - 2]))));
+    });
+    a("X9020","Sequence 1 complete and move-in",0,["X9110","X9210","X9310"]);
+    a("D2010","Sequence 2: abatement and demolition of the existing campus",35,["X9020"],"site");
+    a("V9010","Sequence 2: fields, parking and site restoration",45,["D2010"],"pave");
+    a("X9030","Final completion",0,["V9010"]);
+    g.ctx("bldg", "box", [H.exist(125, 15, 45, 28, 6), H.exist(125, 60, 50, 30, 9), H.exist(125, 105, 40, 26, 6)], {hideWhen:"D2010"});
+    g.box("A1010", [[60, .03, 100, 120, .1, 8], [-6, 1, 60, 1, 2, 140]]);
+    g.box("A1020", [[42, -.6, 35, 92, .9, 78]]);
+    g.box("D2010", [[125, .1, 60, 55, .2, 115]]);
+    g.ctx("lawn", "box", [[125, .25, 75, 52, .1, 70]], {showWhen:"V9010"});
+    g.box("V9010", [].concat(R(102, 148, 8).map(x => [x, .05, 18, 8, .12, 30]), [[125, .2, 75, 50, .08, 68]]));
+  }
+});
+
+P4D.push({
+  key:"edu-newschool", sector:"edu", code:"US-EDU · DEMO 2", kind:"مدرسة إعدادية جديدة تُبنى حسب المنطقة",
+  title:"مدرسة إعدادية جديدة",
+  sub:"مدرسة جديدة تُبنى في ست مناطق تسير بالتوازي: المطبخ والتقديم، والإدارة، والصالة الرياضية والطعام، ومركز الوسائط، وجناحا الفصول. تمر كل منطقة من الأساسات إلى التشطيبات، ثم تُغلق بالفحوص السابقة للتشغيل والتشغيل والاختبار.",
+  ntp:[2026, 6, 7], dd:.5, cam:{p:[-90, 110, -110], t:[60, 0, 45]},
+  context:{type:"campus", bounds:[-10, -10, 130, 100], seed:52, fenceUntil:"X9020"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    a("A1000","Notice to proceed",0);
+    a("P1010","Trade package bidding and steel release",40,["A1000"],"proc");
+    a("A1020","Site work and building pad",40,["A1000"],"site");
+    const AR = [["A","Kitchen and serving",[0, 30, 0, 25], 6],["B","Administration",[30, 60, 0, 20], 5],["C","Gym and dining",[60, 110, 0, 40], 11],
+                ["D","Media center",[30, 60, 20, 45], 6],["E","Classroom wing E",[0, 30, 25, 90], 9],["F","Classroom wing F",[30, 110, 55, 80], 9]];
+    AR.forEach(([k, n, [x0, x1, z0, z1], h], i) => {
+      const prev = i ? `S4${AR[i - 1][0]}10` : "P1010";
+      a(`C2${k}10`,`Area ${k} ${n}: foundations and slab`,18,["A1020"],"conc");
+      a(`S4${k}10`,`Area ${k}: structural steel`,h > 9 ? 22 : 15,[`C2${k}10`,"P1010", prev],"steel");
+      a(`M3${k}10`,`Area ${k}: masonry envelope`,30,[`S4${k}10`],"shell");
+      a(`R5${k}10`,`Area ${k}: roofing`,14,[`S4${k}10`],"roof");
+      a(`M7${k}10`,`Area ${k}: MEP rough-in`,35,[`R5${k}10`],"mech");
+      a(`I8${k}10`,`Area ${k}: finishes`,40,[`M7${k}10`,`M3${k}10`],"arch");
+      g.box(`C2${k}10`, [].concat(H.ring(x0, z0, x1, z1, -.7, .8, 6, .8), H.slab(x0, x1, z0, z1, -.15, .2, 5)));
+      g.box(`S4${k}10`, [].concat(H.cols(R(x0, x1, 7.5), R(z0, z1, Math.min(10, z1 - z0)), 0, h, .4), h === 9 ? H.slab(x0, x1, z0, z1, 4.3, .2, 5) : [], H.joists(x0, x1, z0, z1, h, 1.8, x1 - x0)));
+      g.box(`M3${k}10`, H.courses(x0, z0, x1, z1, 0, h, 1.5, 5, .3));
+      g.box(`R5${k}10`, H.slab(x0 - .2, x1 + .2, z0 - .2, z1 + .2, h + .2, .15, 5), {roof:true});
+      g.box(`M7${k}10`, [[(x0 + x1) / 2, h - .7, (z0 + z1) / 2, x1 - x0 - 2, .6, .6], [(x0 + x1) / 2, h + 1, (z0 + z1) / 2, 4, 1.4, 3]]);
+      g.box(`I8${k}10`, R(x0 + 4, x1 - 4, 6).map(x => [x, 1.7, (z0 + z1) / 2, .15, 3.4, z1 - z0 - 2]));
+    });
+    a("F7010","Fire protection",40,["R5C10","R5E10","R5F10"],"fire");
+    a("EL7010","Electrical service and distribution",45,["S4C10"],"elec");
+    a("X9010","Inspections, pre-functional checks and commissioning",25,AR.map(r => `I8${r[0]}10`).concat(["F7010","EL7010"]),"mech");
+    a("V9010","Bus loop, parking and play fields",35,["X9010"],"pave");
+    a("X9020","Substantial completion",0,["V9010"]);
+    g.box("A1020", [[55, -.6, 45, 120, .9, 100]]);
+    g.cyl("F7010", R(5, 105, 7).map(x => H.pipeZ(1, 79, 8.2, x, .05)));
+    g.box("EL7010", [[112, 1.5, 42, 4, 3, 3], [108, 1.2, 38, 2, 2.4, .8]]);
+    g.box("V9010", [].concat(R(-5, 125, 10).map(x => [x + 5, .03, -20, 10, .12, 16]), [[70, .05, 95, 70, .1, 22]]));
+    g.ctx("car", "box", R(0, 125, 3.2).filter((x, i) => i % 4).map(x => [x, -.1, -20, 1.8, 1.4, 4.4]), {showWhen:"X9020"});
+  }
+});
+
+P4D.push({
+  key:"edu-stadium", sector:"edu", code:"US-EDU · DEMO 3", kind:"تطوير ملاعب مدرسة ثانوية",
+  title:"ملعب كرة القدم الأمريكية والبيسبول بمدرسة ثانوية",
+  sub:"تطويرات ملاعب حول ملعب قائم: مدرجات للفريقين المضيف والزائر، ومبنى من البلوك لمنافذ الأطعمة ودورات المياه، وأكشاك تذاكر، وإنارة الملعب، وأسوار، ونجيل جديد لملعب البيسبول.",
+  ntp:[2026, 1, 9], dd:.55, cam:{p:[-120, 90, -60], t:[55, 0, 40]},
+  context:{type:"campus", bounds:[-20, -20, 200, 100], seed:61, fenceUntil:"X9020"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    a("A1000","Notice to proceed with construction",0);
+    a("P1010","State plan approval and submittals",40,["A1000"],"proc");
+    a("A1020","Hazardous material abatement and demolition",20,["A1000"],"site");
+    a("A1030","Site grading, storm drainage and SWPPP",30,["A1020"],"site");
+    a("C2010","Bleacher and building foundations",25,["A1030","P1010"],"conc");
+    a("S4010","Home bleachers: steel and aluminium seating",30,["C2010"],"steel");
+    a("S4020","Visitor bleachers",20,["C2010"],"steel");
+    a("M3010","Concession and toilet building masonry",25,["C2010"],"shell");
+    a("R5010","Concession building roof",10,["M3010"],"roof");
+    a("M7010","Concession building HVAC and plumbing",20,["R5010"],"mech");
+    a("M3020","Ticket booths",15,["C2010"],"shell");
+    a("EL7010","Field lighting poles and electrical",30,["A1030"],"elec");
+    a("I8010","Glazing, coiling doors and finishes",20,["M7010"],"arch");
+    a("V9010","Track and plaza paving",25,["S4010","S4020"],"pave");
+    a("A1040","Baseball field fencing and sod",25,["A1030","EL7010"],"site");
+    a("X9010","Inspections and owner move-in",10,["I8010","V9010","A1040","M3020"]);
+    a("X9020","Project complete",0,["X9010"]);
+    g.ctx("lawn", "box", [[55, -.95, 40, 110, .1, 50], [160, -.95, 40, 70, .1, 70]]);
+    g.box("A1020", [[55, .05, 72, 60, .1, 10]]);
+    g.cyl("A1030", [H.pipeX(-15, 195, -.7, 75, .4), H.pipeZ(-15, 95, -.7, 115, .35)]);
+    g.box("C2010", [].concat(R(15, 95, 8).map(x => [x, -.3, 72, 2, .6, 14]), R(25, 85, 10).map(x => [x, -.3, 8, 2, .6, 8]), [[115, -.3, 75, 14, .6, 10]]));
+    const tiers = (x0, x1, z0, dz, n, sign, rise) => R(0, n - 1, 1).map(i => [(x0 + x1) / 2, i * rise + rise / 2, z0 + sign * i * dz, x1 - x0, rise, dz]);
+    g.box("S4010", [].concat(tiers(15, 95, 67, .9, 14, 1, .42), H.cols(R(15, 95, 10), [79.6], 0, 8, .3), [[55, 8.2, 76, 80, .2, 8]]));
+    g.box("S4020", tiers(25, 85, 12, .9, 8, -1, .42));
+    g.box("M3010", H.courses(108, 70, 122, 80, 0, 3.6, .8, 2.8, .25));
+    g.box("R5010", [[115, 3.8, 75, 14.5, .2, 10.5]], {roof:true});
+    g.box("M7010", [[112, 4.5, 75, 2, 1, 1.5]], {roof:true});
+    g.box("M3020", [[100, 1.4, 90, 4, 2.8, 3], [10, 1.4, 90, 4, 2.8, 3]]);
+    g.cyl("EL7010", [[-2, 12, 12, .5, 25, .5], [112, 12, 12, .5, 25, .5], [-2, 12, 68, .5, 25, .5], [112, 12, 68, .5, 25, .5], [130, 10, 5, .4, 21, .4], [190, 10, 75, .4, 21, .4]]);
+    g.box("I8010", [[115, 1.5, 69.9, 8, 2.5, .15]]);
+    g.box("V9010", [].concat(R(0, 110, 10).map(x => [x + 5, -.88, 13, 10, .1, 6]), R(0, 110, 10).map(x => [x + 5, -.88, 66, 10, .1, 6])));
+    g.box("A1040", [].concat(R(125, 195, 5).map(x => [x, .9, 5, 4.9, 1.8, .06]), R(5, 75, 5).map(z => [195, .9, z, .06, 1.8, 4.9]), [[160, -.88, 40, 65, .06, 65]]));
+  }
+});
+
+/* ---------------- WATER ---------------- */
+P4D.push({
+  key:"wtr-treatment", sector:"wtr", code:"US-WTR · DEMO 1", kind:"تطوير محطة معالجة مياه",
+  title:"تطوير محطة معالجة مياه",
+  sub:"أعمال داخل محطة عاملة: مواسير الساحة وربط حلقة المحطة خلال نوافذ الإيقاف، ومضخات ومغيرات سرعة جديدة في مباني المرشحات ومحطة الضخ عالية الضغط، وهدم خزان غسيل عكسي قديم، وتشغيل متكامل.",
+  ntp:[2026, 2, 9], dd:.5, cam:{p:[-90, 95, -100], t:[55, 0, 45]},
+  context:{type:"rural", bounds:[-15, -15, 130, 105], seed:72},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    a("A1000","Notice to proceed",0);
+    a("P1010","Pump, VFD and pipe submittals and procurement",70,["A1000"],"proc");
+    a("D2010","Generator pad demolition",10,["A1000"],"site");
+    a("D2020","North backwash tank demolition",20,["A1000"],"site");
+    a("M7010","Yard piping, line 1",30,["D2020","P1010"],"mech");
+    a("M7020","Yard piping, lines 2 and 3",35,["M7010"],"mech");
+    a("M7030","36-inch plant water loop tie-in (shutdown)",10,["M7020"],"mech");
+    a("M7040","South filter building pumps and VFDs",30,["P1010"],"mech");
+    a("M7050","North filter building pumps and VFDs",30,["M7040","M7030"],"mech");
+    a("M7060","High-service pump station upgrades",35,["P1010"],"mech");
+    a("EL7010","Electrical and controls",40,["M7040","M7060"],"elec");
+    a("C2010","New generator pad and housekeeping pads",15,["D2010"],"conc");
+    a("M7070","Disinfection and pressure testing",15,["M7050","M7030"],"mech");
+    a("X9010","Integrated functional testing",20,["M7070","EL7010","C2010"]);
+    a("X9020","Start-up complete",0,["X9010"]);
+    g.ctx("bldg", "box", [H.exist(20, 20, 30, 25, 8), H.exist(20, 70, 30, 25, 8), H.exist(95, 20, 30, 18, 7), H.exist(95, 85, 20, 14, 5)]);
+    g.ctx("water", "cyl", [[70, -.3, 60, 22, 1.5, 22], [100, -.3, 55, 18, 1.5, 18], [55, -.3, 95, 14, 1.4, 14]]);
+    g.ctx("bldg", "cyl", [H.tank(115, 90, 6, 7, -1)], {hideWhen:"D2020"});
+    g.ctx("bldg", "box", [[75, .5, 0, 8, 1.2, 5]], {hideWhen:"D2010"});
+    g.box("D2010", [[75, .05, 0, 9, .1, 6]]); g.box("D2020", [[115, .05, 90, 13, .1, 13]]);
+    g.cyl("M7010", [H.pipeX(35, 110, -.4, 45, .45)]);
+    g.cyl("M7020", [H.pipeX(35, 110, -.4, 50, .45), H.pipeZ(30, 95, -.4, 45, .45)]);
+    g.cyl("M7030", [H.pipeZ(-10, 110, -.4, 120, .5), [120, .6, 45, 1.6, 1.2, 1.6]]);
+    g.cyl("M7040", R(10, 30, 5).map(x => [x, 1.5, 34, 1.2, 2.5, 1.2]));
+    g.cyl("M7050", R(10, 30, 5).map(x => [x, 1.5, 84, 1.2, 2.5, 1.2]));
+    g.cyl("M7060", R(84, 106, 5.5).map(x => [x, 1.2, 31, 1.4, 2, 1.4]));
+    g.box("EL7010", [[34, 1.3, 30, 1.2, 2.4, 5], [34, 1.3, 80, 1.2, 2.4, 5], [112, 1.3, 25, 1.2, 2.4, 5]]);
+    g.box("C2010", [[75, .2, 0, 9, .4, 6], [70, .15, 25, 5, .3, 4]]);
+    g.box("C2010", [[75, 1.6, 0, 7, 2.4, 3.5]]);
+    g.box("M7070", [[120, .3, 45, 2, .6, 2]]);
+  }
+});
+
+P4D.push({
+  key:"wtr-wwtp", sector:"wtr", code:"US-WTR · DEMO 2", kind:"تطوير الأعمال الكهربائية والعمليات في محطة صرف صحي",
+  title:"تطوير نزع المياه والأعمال الكهربائية في محطة صرف صحي",
+  sub:"مبانٍ كهربائية سابقة الصب وحلقات جهد متوسط تغذي معدات نزع مياه جديدة، وصومعة لتثبيت الحمأة بالجير، ومرشحاً بيولوجياً لمعالجة الروائح، ونظام خلط لخزان الحمأة، مع طرق جديدة للمحطة في النهاية.",
+  ntp:[2025, 0, 13], dd:.5, cam:{p:[-90, 90, -90], t:[55, 0, 45]},
+  context:{type:"rural", bounds:[-15, -15, 125, 105], seed:83},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    a("A1000","Notice to proceed",0);
+    a("P1010","Belt press, switchgear and mixing system procurement",120,["A1000"],"proc");
+    a("A1020","Erosion control and site civil",30,["A1000"],"site");
+    a("C2010","Electrical building foundations",15,["A1020"],"conc");
+    a("M3010","Precast electrical buildings set",15,["C2010"],"shell");
+    a("EL7010","Medium-voltage duct bank loops",45,["A1020"],"elec");
+    a("EL7020","Switchgear and switchboards",25,["M3010","P1010"],"elec");
+    a("M7010","Dewatering building improvements and belt press",50,["P1010"],"mech");
+    a("M7020","Lime stabilization system and silo",40,["A1020"],"mech");
+    a("M7030","Odor control biotrickling filter",45,["A1020"],"mech");
+    a("M7040","Sludge holding tank mixing system",35,["P1010"],"mech");
+    a("M7050","Hydrogen peroxide and polymer systems",30,["M7010"],"mech");
+    a("EL7030","Power and controls wiring to all systems",40,["EL7020","EL7010","M7010","M7030","M7040"],"elec");
+    a("V9010","Concrete plant roads",30,["EL7010"],"pave");
+    a("X9010","Testing, punch list and final completion",20,["EL7030","M7020","M7050","V9010"]);
+    a("X9020","Final completion",0,["X9010"]);
+    g.ctx("bldg", "box", [H.exist(20, 80, 30, 20, 7), H.exist(105, 20, 20, 30, 6)]);
+    g.ctx("water", "cyl", [[75, -.3, 85, 26, 1.5, 26], [105, -.3, 80, 20, 1.5, 20]]);
+    g.ctx("bldg", "cyl", [H.tank(40, 15, 9, 6, -1), H.tank(60, 15, 9, 6, -1)]);
+    g.box("A1020", [[55, -.5, 45, 130, .7, 110]]);
+    g.box("C2010", [[10, .1, 10, 14, .3, 8], [10, .1, 40, 12, .3, 8]]);
+    g.box("M3010", [[10, 2, 10, 13, 3.8, 7], [10, 2, 40, 11, 3.8, 7]]);
+    g.box("EL7010", [[55, -.4, 0, 100, .6, .9], [3, -.4, 50, .9, .6, 100]]);
+    g.box("EL7020", [[7, 1.3, 10, 6, 2.4, 1], [13, 1.3, 10, 4, 2.4, 1], [10, 1.3, 40, 5, 2.4, 1]]);
+    g.box("M7010", [[85, 3.5, 40, 24, 7, 16], [80, 1.2, 40, 6, 2, 2.5], [90, 1.2, 40, 6, 2, 2.5]]);
+    g.cyl("M7020", [H.tank(30, 45, 3, 14, .3), [30, 15, 45, 1, 2, 1]]);
+    g.cyl("M7030", [H.tank(50, 60, 4.5, 9, .3), H.tank(62, 60, 4.5, 9, .3), H.pipeX(50, 85, 6, 52, .4)]);
+    g.cyl("M7040", [[40, 4.8, 15, .6, 2, .6], [60, 4.8, 15, .6, 2, .6], H.pipeX(40, 60, 5.2, 15, .2)]);
+    g.cyl("M7050", [H.tank(100, 50, 1.6, 4, .3), H.tank(104, 50, 1.6, 4, .3)]);
+    g.box("EL7030", [[45, .15, 30, 70, .1, .3], [70, .15, 48, .3, .1, 36]]);
+    g.box("V9010", [].concat(R(-10, 120, 10).map(x => [x + 5, .03, -8, 10, .15, 8]), R(-5, 100, 10).map(z => [118, .03, z + 5, 8, .15, 10])));
+  }
+});
+
+P4D.push({
+  key:"wtr-tank", sector:"wtr", code:"US-WTR · DEMO 3", kind:"استبدال خزان لمياه الشرب",
+  title:"خزان مياه من الصلب الملحوم",
+  sub:"استبدال خزان في موقع ناءٍ. بعد التصريح البيئي وأعمال التربة، يُنفذ الأساس الحلقي وشبكة الصرف السفلية، وتُلحم ألواح القاع وحلقات الجدار حلقة بعد حلقة، ثم السقف والطلاء ومواسير الساحة وأنظمة التحكم بالطاقة الشمسية والاختبار والتطهير.",
+  ntp:[2026, 8, 22], dd:.55, cam:{p:[-45, 35, -50], t:[0, 6, 0]},
+  context:{type:"rural", bounds:[-30, -30, 30, 30], seed:94, fenceUntil:"X9020"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g), r = 12;
+    a("A1000","Contract award",0);
+    a("P1010","Tank design, shop drawings and coating submittals",40,["A1000"],"proc");
+    a("A1020","Environmental and archaeological clearance",25,["A1000"],"site");
+    a("A1030","Mobilization, site preparation and earthwork",20,["A1020"],"site");
+    a("C2010","Ring wall foundation and underdrain",20,["A1030"],"conc");
+    a("S4010","Weld and inspect bottom plates",10,["C2010","P1010"],"steel");
+    ["1","2","3","4","5"].forEach((k, i) => a(`S402${k}`,`Shell course ${k}`,6,[i ? `S402${i}` : "S4010"],"steel"));
+    a("S4030","Roof structure and plates",10,["S4025"],"steel");
+    a("E6010","Interior and exterior coating",25,["S4030"],"env");
+    a("M7010","Yard piping, valves and overflow",20,["C2010"],"mech");
+    a("EL7010","Electrical, solar and telemetry",20,["S4030"],"elec");
+    a("M7020","Fill test and disinfection",15,["E6010","M7010"],"mech");
+    a("A1040","Final site work and restoration",15,["M7020"],"site");
+    a("X9010","Testing and commissioning",10,["M7020","EL7010"]);
+    a("X9020","Substantial completion",0,["X9010","A1040"]);
+    g.box("A1030", [[0, -.6, 0, 40, .8, 40]]);
+    g.box("C2010", R(0, 345, 15).map(d => { const t = d * Math.PI / 180; return [Math.cos(t) * r, -.2, Math.sin(t) * r, 3.4, .9, .9, 0, -t + Math.PI / 2, 0]; }));
+    g.cyl("S4010", [[0, .1, 0, r * 2, .1, r * 2]]);
+    ["1","2","3","4","5"].forEach((k, i) => g.cyl(`S402${k}`, [[0, i * 2.4 + 1.3, 0, r * 2 + .1, 2.38, r * 2 + .1]]));
+    g.cone("S4030", [[0, 12.9, 0, r * 2 + .3, 1.6, r * 2 + .3]], {roof:true});
+    g.cyl("E6010", [[0, 6.3, 0, r * 2 + .3, 12.2, r * 2 + .3]]);
+    g.cyl("M7010", [H.pipeX(12, 30, -.3, 3, .25), H.pipeX(12, 30, -.3, -3, .2), [14, 4, -6, .3, 8, .3]]);
+    g.box("EL7010", [[20, 1.4, 14, 3, .1, 2, -.7, 0, 0], [18, 1, 10, 1, 2, .6]]);
+    g.box("M7020", [[0, .15, 0, 2, .3, 2]]);
+    g.box("A1040", [[18, .02, 0, 14, .1, 8]]);
+  }
+});
+
+</script>
+<script>
+/* Roads and Data center demonstration models. */
+
+/* ---------------- ROADS ---------------- */
+P4D.push({
+  key:"road-corridor", sector:"road", code:"US-ROAD · DEMO 1", kind:"محور حضري متكامل",
+  title:"إعادة إنشاء محور حضري متكامل",
+  sub:"محور حضري بطول 600 م يُعاد إنشاؤه على مراحل مرورية: هدم الجزيرة الوسطى ورصف التحويلة، وإعادة إنشاء ثلاثة تقاطعات بمرافق وغرف أرضية جديدة، ثم البردورات والأرصفة ومنحدرات ذوي الإعاقة ومحطات النقل العام والإنارة وأشجار الشارع، وأخيراً الكشط والطبقة السطحية.",
+  ntp:[2025, 11, 1], dd:.5, cam:{p:[-120, 140, -220], t:[300, 0, 0]},
+  context:{type:"urban", bounds:[0, -32, 600, 32], seed:101, fence:false},
+  setup(g){
+    const {R} = H, a = g.act.bind(g), IX = [150, 300, 450];
+    a("A1000","Notice to proceed",0);
+    a("A1010","Engineering, permits and early works",30,["A1000"],"site");
+    a("A1020","Phase 1: median demolition and detour paving",25,["A1010"],"site");
+    IX.forEach((x, i) => {
+      const k = i + 1, p = i ? `C20${k - 1}3` : "A1020";
+      a(`A20${k}1`,`Phase 2: intersection ${k} utilities and water line`,15,[p],"site");
+      a(`C20${k}2`,`Phase 2: intersection ${k} drainage vault and inlets`,12,[`A20${k}1`],"conc");
+      a(`C20${k}3`,`Phase 2: intersection ${k} concrete paving`,15,[`C20${k}2`],"pave");
+      g.cyl(`A20${k}1`, [H.pipeZ(-28, 28, -1.6, x - 4, .4), H.pipeX(x - 25, x + 25, -1.6, -8, .35)]);
+      g.box(`C20${k}2`, [[x + 6, -1.4, 6, 3, 2, 3], [x - 12, -.8, -13, 1.2, 1, 1.2], [x + 12, -.8, 13, 1.2, 1, 1.2]]);
+      g.box(`C20${k}3`, R(x - 15, x + 15, 5).map(xx => [xx, -.88, 0, 5, .25, 28]));
+    });
+    a("C2040","Phase 3: north curb, gutter and sidewalk",30,["C2033"],"conc");
+    a("C2050","Phase 4: south curb, gutter and sidewalk",30,["C2040"],"conc");
+    a("C2060","ADA ramps and transit stops",15,["C2050"],"conc");
+    a("EL7010","Street lighting and signal poles",20,["C2050"],"elec");
+    a("A1030","Landscaping and street trees",20,["C2060"],"site");
+    a("V9010","Final mill and overlay",12,["C2050"],"pave");
+    a("V9020","Striping and signage",6,["V9010","EL7010"],"pave");
+    a("X9010","Project acceptance",0,["V9020","A1030"]);
+    g.ctx("road", "box", [[300, -1.05, 0, 600, .2, 28]]);
+    g.ctx("bldg", "box", R(5, 595, 10).map(x => [x, -.85, 0, 9.8, .3, 3]), {hideWhen:"A1020"});
+    g.box("A1010", [[-20, .5, 20, 8, 1, 3]]);
+    g.box("A1020", R(10, 590, 20).map(x => [x, -.9, -20, 20, .2, 8]));
+    const curb = (z) => R(5, 595, 10).map(x => [x, -.75, z, 10, .3, .3]), walk = (z) => R(5, 595, 10).map(x => [x, -.82, z, 10, .2, 3.6]);
+    g.box("C2040", [].concat(curb(14.2), walk(16.3)));
+    g.box("C2050", [].concat(curb(-14.2), walk(-16.3), R(5, 595, 10).filter(x => !IX.some(i => Math.abs(i - x) < 18)).map(x => [x, -.7, 0, 10, .4, 3])));
+    g.box("C2060", [].concat(...IX.map(x => [[x - 17, -.8, 15, 3, .25, 3], [x + 17, -.8, -15, 3, .25, 3]]), [[90, 1.4, 17.5, 8, .2, 2.5], [380, 1.4, -17.5, 8, .2, 2.5]]));
+    g.cyl("EL7010", [].concat(R(20, 580, 40).map(x => [x, 3.5, 15, .25, 9, .25]), R(40, 580, 40).map(x => [x, 3.5, -15, .25, 9, .25])));
+    g.sph("A1030", [].concat(R(30, 570, 25).map(x => [x, 3, 18.2, 4, 5, 4]), R(45, 570, 25).map(x => [x, 3, -18.2, 4, 5, 4]), R(15, 585, 20).filter(x => !IX.some(i => Math.abs(i - x) < 18)).map(x => [x, .1, 0, 2.5, 1.2, 2.5])));
+    g.box("V9010", R(5, 595, 10).map(x => [x, -.86, 0, 10, .12, 27.5]));
+    g.box("V9020", [].concat(R(2, 598, 6).map(x => [x, -.78, 6.5, 3, .03, .15]), R(2, 598, 6).map(x => [x, -.78, -6.5, 3, .03, .15])));
+    g.ctx("car", "box", [].concat(R(12, 590, 37).map(x => [x, -.2, 3.5, 4.4, 1.4, 1.8]), R(30, 590, 41).map(x => [x, -.2, -3.5, 4.4, 1.4, 1.8])), {showWhen:"X9010"});
+  }
+});
+
+P4D.push({
+  key:"road-highway", sector:"road", code:"US-ROAD · DEMO 2", kind:"إعادة إنشاء طريق بالولاية على قطاعين",
+  title:"إعادة إنشاء طريق ريفي بالولاية",
+  sub:"طريق بحارتين بطول 1.2 كم يُعاد إنشاؤه على قطاعين، كل منهما على ثلاث مراحل مرورية: الاستعارة والجسور الترابية، والعبّارات الصندوقية، وطبقة الأساس، والرصف بنصف العرض، ثم الأكتاف والحواجز الحديدية وعلامات الطريق.",
+  ntp:[2025, 11, 8], dd:.45, cam:{p:[-160, 160, -260], t:[520, 0, 0]},
+  context:{type:"highway", bounds:[0, -20, 1200, 20], seed:111, fence:false, clear:(x, z) => Math.abs(z) < 34 && x > -80 && x < 1280},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    a("A1000","Notice to proceed",0);
+    a("A1010","Mobilization, traffic control and detour",20,["A1000"],"site");
+    [["1", 0, 600], ["2", 600, 1200]].forEach(([k, x0, x1], i) => {
+      const p = i ? "V9114" : "A1010";
+      a(`A2${k}10`,`Segment ${k}: removal of surfacing and borrow`,20,[p],"site");
+      a(`A2${k}11`,`Segment ${k}: unclassified excavation and embankment`,25,[`A2${k}10`],"site");
+      a(`C2${k}12`,`Segment ${k}: box culverts`,20,[`A2${k}11`],"conc");
+      a(`V9${k}12`,`Segment ${k}: base course`,15,[`C2${k}12`],"pave");
+      a(`V9${k}13`,`Segment ${k}: paving, first half-width`,10,[`V9${k}12`],"pave");
+      a(`V9${k}14`,`Segment ${k}: paving, second half-width and shoulders`,12,[`V9${k}13`],"pave");
+      g.box(`A2${k}10`, R(x0 + 10, x1 - 10, 20).map(x => [x, -1.0, 0, 20, .15, 22]));
+      g.box(`A2${k}11`, R(x0 + 10, x1 - 10, 20).map(x => [x, -.7, 0, 20, .6, 18]));
+      g.box(`C2${k}12`, [[x0 + 180, -.9, 0, 4, 2.4, 22], [x0 + 430, -.9, 0, 4, 2.4, 22]]);
+      g.box(`V9${k}12`, R(x0 + 10, x1 - 10, 20).map(x => [x, -.3, 0, 20, .2, 12]));
+      g.box(`V9${k}13`, R(x0 + 10, x1 - 10, 20).map(x => [x, -.15, -3, 20, .12, 6]));
+      g.box(`V9${k}14`, [].concat(R(x0 + 10, x1 - 10, 20).map(x => [x, -.15, 3, 20, .12, 6]), R(x0 + 10, x1 - 10, 20).map(x => [x, -.2, 7.5, 20, .1, 3]), R(x0 + 10, x1 - 10, 20).map(x => [x, -.2, -7.5, 20, .1, 3])));
+    });
+    a("S4010","Guardrail at culverts and curves",15,["V9214"],"steel");
+    a("V9020","Final striping",8,["V9214"],"pave");
+    a("X9010","Clean-up, punch list and final acceptance",15,["S4010","V9020"]);
+    a("X9020","Final acceptance",0,["X9010"]);
+    g.ctx("road", "box", [[600, -1.05, -16, 1300, .2, 8]], {hideWhen:"X9020"});
+    g.box("A1010", [].concat(R(-30, 1230, 60).map(x => [x, .2, -11, .4, 1.6, .4]), [[-40, 1.5, 0, .2, 3, 3], [1240, 1.5, 0, .2, 3, 3]]));
+    g.box("S4010", [].concat(...[180, 430, 780, 1030].map(x => [[x, .2, 9.3, 60, .6, .15], [x, .2, -9.3, 60, .6, .15]])));
+    g.box("V9020", [].concat(R(5, 1195, 12).map(x => [x, -.07, 0, 6, .03, .15]), R(5, 1195, 10).map(x => [x, -.07, 5.9, 10, .03, .12]), R(5, 1195, 10).map(x => [x, -.07, -5.9, 10, .03, .12])));
+    g.ctx("car", "box", [[200, .5, 3, 4.4, 1.4, 1.8], [520, .5, -3, 4.4, 1.4, 1.8], [870, .9, 3, 12, 3, 2.5]], {showWhen:"X9020"});
+  }
+});
+
+P4D.push({
+  key:"road-interstate", sector:"road", code:"US-ROAD · DEMO 3", kind:"كشط وإعادة رصف طريق سريع",
+  title:"كشط وإعادة رصف طريق سريع بين الولايات",
+  sub:"طريق سريع مزدوج بطول 1.4 كم يُعاد رصفه مع الحفاظ على حركة المرور: إصلاحات الصرف والجسور الترابية، وكشط المسار الرئيسي وإعادة رصفه على مراحل في كل اتجاه، والمنحدرات، وفواصل بلاطات الجسور، وطبقة الاحتكاك، والحواجز الحديدية، وموقع لرصد المرور.",
+  ntp:[2024, 1, 5], dd:.55, cam:{p:[-180, 170, -260], t:[620, 0, 0]},
+  context:{type:"highway", bounds:[0, -30, 1400, 30], seed:121, fence:false, clear:(x, z) => (Math.abs(z) < 45 && x > -100 && x < 1500) || (Math.abs(x - 800) < 14)},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    const lanes = (x0, x1, z, w, y) => R(x0 + 10, x1 - 10, 20).map(x => [x, y, z, 20, .12, w]);
+    a("A1000","Notice to proceed",0);
+    a("A1010","Mobilization and advance warning signs",10,["A1000"],"site");
+    a("A1020","Erosion control and drainage improvements",20,["A1010"],"site");
+    a("A1030","Embankment repairs",15,["A1020"],"site");
+    a("V9110","Phase I: eastbound outside lane mill and resurface",20,["A1030"],"pave");
+    a("V9120","Phase II: eastbound mainline mill and resurface",25,["V9110"],"pave");
+    a("V9130","Phase III: westbound mainline mill and resurface",25,["V9120"],"pave");
+    a("V9140","Ramps: mill and resurface",12,["V9120"],"pave");
+    a("C2010","Bridge deck joint replacement",15,["V9130"],"conc");
+    a("V9150","Phase IV: eastbound friction course",10,["V9130","C2010"],"pave");
+    a("V9160","Phase V: westbound friction course",10,["V9150"],"pave");
+    a("S4010","Guardrail",15,["V9130"],"steel");
+    a("V9170","Permanent pavement markings",8,["V9160"],"pave");
+    a("EL7010","Traffic monitoring site",10,["V9170"],"elec");
+    a("X9010","Final inspection and completion",5,["EL7010","S4010","V9140"]);
+    a("X9020","Final completion",0,["X9010"]);
+    g.ctx("bldg", "box", [[700, -.95, -12, 1400, .15, 12], [700, -.95, 12, 1400, .15, 12]]);
+    g.ctx("road", "box", [[800, -6, 0, 14, .2, 400], [800, -.6, 0, 16, .8, 40]]);
+    g.ctx("bldg", "box", [[500, -.95, 40, 260, .15, 7, 0, -.12, 0], [1000, -.95, -40, 260, .15, 7, 0, -.12, 0]]);
+    g.box("A1010", [].concat(R(-40, 1440, 120).map(x => [x, 2, 20, .2, 4, 2.5]), R(-40, 1440, 120).map(x => [x, 2, -20, .2, 4, 2.5])));
+    g.cyl("A1020", [H.pipeZ(-25, 25, -1.6, 300, .6), H.pipeZ(-25, 25, -1.6, 1150, .6)]);
+    g.box("A1030", [[300, -1.1, 22, 60, .4, 6], [1150, -1.1, -22, 60, .4, 6]]);
+    g.box("V9110", lanes(0, 1400, 16, 4, -.86));
+    g.box("V9120", lanes(0, 1400, 10, 8, -.86));
+    g.box("V9130", [].concat(lanes(0, 1400, -10, 8, -.86), lanes(0, 1400, -16, 4, -.86)));
+    g.box("V9140", [[500, -.86, 40, 260, .12, 6.5, 0, -.12, 0], [1000, -.86, -40, 260, .12, 6.5, 0, -.12, 0]]);
+    g.box("C2010", [[793, -.6, 12, .8, .3, 12], [807, -.6, 12, .8, .3, 12], [793, -.6, -12, .8, .3, 12], [807, -.6, -12, .8, .3, 12]]);
+    g.box("V9150", lanes(0, 1400, 12, 12, -.79));
+    g.box("V9160", lanes(0, 1400, -12, 12, -.79));
+    g.box("S4010", [].concat(R(10, 1390, 20).map(x => [x, -.5, 18.4, 20, .6, .15]), R(10, 1390, 20).map(x => [x, -.5, -18.4, 20, .6, .15]), R(10, 1390, 20).map(x => [x, -.5, 0, 20, .8, .5])));
+    g.box("V9170", [].concat(...[8, 12, 16, -8, -12, -16].map(z => R(5, 1395, 12).map(x => [x, -.72, z + (z > 0 ? 2 : -2), 3, .03, .15]))));
+    g.box("EL7010", [[1300, 1.2, 21, 1, 2.4, 1], [1300, 6, 0, .4, .4, 40]]);
+    g.ctx("car", "box", [].concat(R(30, 1380, 47).map((x, i) => [x, -.2, i % 2 ? 9 : 14, 4.4, 1.4, 1.8]), R(50, 1380, 53).map((x, i) => [x, i % 3 ? -.2 : .6, i % 2 ? -9 : -14, i % 3 ? 4.4 : 14, i % 3 ? 1.4 : 3, i % 3 ? 1.8 : 2.5])), {showWhen:"X9020"});
+  }
+});
+
+/* ---------------- DATA CENTERS ---------------- */
+P4D.push({
+  key:"dc-hyperscale", sector:"dc", code:"US-DC · DEMO 1", kind:"حرم فائق السعة، النطاق الكهربائي",
+  title:"حرم مراكز بيانات فائقة السعة",
+  sub:"مبنيان لمراكز البيانات ومبنى لمضخات الحريق، من منظور مقاول الكهرباء: مجاري الكابلات المدفونة أولاً، ثم ساحات المولدات، ولوحات الجهد المتوسط، ومجاري القضبان ووحدات توزيع الطاقة في قاعات البيانات، والتوصيل الكهربائي، والتشغيل والاختبار من المستوى 3 إلى 5، وكلها مرتبطة بمواعيد الهيكل والسقف لدى المقاول العام.",
+  ntp:[2026, 10, 2], dd:.5, cam:{p:[-170, 190, -200], t:[110, 0, 85]},
+  context:{type:"industrial", bounds:[-20, -30, 250, 200], seed:131, fenceUntil:"X9020"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g);
+    a("A1000","Notice to proceed",0);
+    a("P1010","Switchgear, generator and busway procurement",120,["A1000"],"proc");
+    a("A1020","Mass grading and site utilities",40,["A1000"],"site");
+    a("EL7010","Underground duct banks and manholes",45,["A1020"],"elec");
+    a("F7010","Fire pump house",35,["A1020"],"fire");
+    [["1", 0, 75], ["2", 110, 185]].forEach(([k, z0, z1], i) => {
+      const x0 = 0, x1 = 160, p = i ? ["C2110"] : [];
+      a(`C2${k}10`,`Building ${k}: foundations and slab (by GC)`,30,["A1020"].concat(p),"conc");
+      a(`M3${k}10`,`Building ${k}: precast shell (by GC)`,35,[`C2${k}10`],"shell");
+      a(`S4${k}10`,`Building ${k}: roof steel, deck and roofing (by GC)`,30,[`M3${k}10`],"roof");
+      a(`EL7${k}20`,`Building ${k}: generator yard and fuel tanks`,30,[`C2${k}10`,"EL7010","P1010"],"elec");
+      a(`EL7${k}30`,`Building ${k}: MV switchgear and electrical rooms`,35,[`S4${k}10`,"P1010"],"elec");
+      a(`EL7${k}40`,`Building ${k}: data hall busway, cable tray and PDUs`,50,[`S4${k}10`],"elec");
+      a(`M7${k}40`,`Building ${k}: rooftop air handlers (by others)`,30,[`S4${k}10`],"mech");
+      a(`EL7${k}50`,`Building ${k}: energization`,10,[`EL7${k}30`,`EL7${k}40`,`EL7${k}20`],"elec");
+      a(`X9${k}10`,`Building ${k}: L3 to L5 commissioning and IST`,30,[`EL7${k}50`,`M7${k}40`],"mech");
+      g.box(`C2${k}10`, [].concat(H.pads(R(x0, x1, 16), R(z0, z1, 15), 2.6, .9), H.slab(x0, x1, z0, z1, -.2, .25, 8)));
+      g.box(`M3${k}10`, H.ring(x0, z0, x1, z1, 0, 14, 8, .35));
+      g.box(`S4${k}10`, [].concat(H.cols(R(16, 144, 16), R(z0 + 15, z1 - 15, 15), 0, 13.6, .45), H.slab(x0, x1, z0, z1, 14, .2, 8)), {roof:true});
+      g.box(`EL7${k}20`, [].concat(R(10, 150, 10).map(x => [x, 1.6, z0 - 9, 7, 3.2, 3]), R(10, 150, 20).map(x => [x, .6, z0 - 14, 8, 1.2, 2.4])));
+      g.box(`EL7${k}30`, R(8, 152, 16).map(x => [x, 1.3, z1 - 4, 6, 2.6, 1.2]));
+      g.box(`EL7${k}40`, [].concat(R(12, 148, 8).map(x => [x, 11, (z0 + z1) / 2, .5, .25, z1 - z0 - 14]), ...R(16, 144, 16).map(x => R(z0 + 10, z1 - 10, 6).map(z => [x, 1, z, 1.2, 2, .8]))));
+      g.box(`M7${k}40`, R(15, 145, 16).map(x => [x, 15.6, (z0 + z1) / 2, 8, 3, 4]), {roof:true});
+      g.box(`EL7${k}50`, [[165, 2, z0 + 10, 4, 4, 6]]);
+      g.box(`X9${k}10`, [[175, 1.5, z0 + 10, 3, 3, 3]]);
+    });
+    a("X9020","Campus turnover",0,["X9110","X9210","F7010"]);
+    g.box("A1020", [[80, -.6, 92, 200, .9, 240]]);
+    g.box("EL7010", [].concat(R(5, 175, 10).map(x => [x, -.5, -24, 10, .7, 1.2]), R(-20, 180, 10).map(z => [178, -.5, z + 5, 1.2, .7, 10]), R(5, 175, 10).map(x => [x, -.5, 96, 10, .7, 1.2])));
+    g.box("F7010", [[200, 3, 96, 12, 6, 10]]);
+  }
+});
+
+P4D.push({
+  key:"dc-colocation", sector:"dc", code:"US-DC · DEMO 2", kind:"مركز بيانات للاستضافة المشتركة متعدد الطوابق",
+  title:"مركز بيانات للاستضافة المشتركة من أربعة طوابق",
+  sub:"مبنى للاستضافة المشتركة من أربعة طوابق على موقع تمت معالجته: إزالة المواد الخطرة والهدم ومعالجة التربة، والخوازيق والبنية السفلية، وهيكل معدني مع صب البلاطات على الصاج المعدني، والغلاف ومنصة ميكانيكية على السطح، ثم تجهيز قاعات البيانات وتشغيلها واختبارها مستوى بعد مستوى.",
+  ntp:[2025, 3, 7], dd:.55, cam:{p:[-110, 110, -120], t:[45, 10, 35]},
+  context:{type:"urban", bounds:[-25, -30, 120, 95], seed:141, fenceUntil:"X9020"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g), L = 4, fh = 6, f = H.frame(0, 90, 0, 60, 10, 10, L, fh, 5);
+    a("A1000","Mobilization",0);
+    a("A1010","Abatement and demolition of existing buildings",30,["A1000"],"site");
+    a("A1020","Soil remediation, cut and fill",25,["A1010"],"site");
+    a("P1010","Generator, UPS and switchgear procurement",140,["A1000"],"proc");
+    a("C2010","Piling and substructure",35,["A1020"],"conc");
+    for (let l = 1; l <= L; l++) {
+      a(`S40${l}0`,`Level ${l}: steel columns and beams`,12,[l > 1 ? `S40${l - 1}0` : "C2010"],"steel");
+      a(`C20${l}5`,`Level ${l}: slab-on-metal-deck pour`,10,[`S40${l}0`],"conc");
+      g.box(`S40${l}0`, [].concat(f.cols[l - 1], [[45, l * fh - .7, 30, 90, .6, .5]]));
+      g.box(`C20${l}5`, f.slabs[l - 1], l === L ? {roof:true} : {});
+    }
+    a("E6010","Enclosure: precast and metal panels",45,["C2025"],"env");
+    a("R5010","Roof and rooftop mechanical platform",30,["C2045"],"roof");
+    a("A1030","Generator yards",40,["C2010","P1010"],"elec");
+    for (let l = 1; l <= L; l++) {
+      a(`EL7${l}10`,`Level ${l}: data hall racks, cable tray and overhead PDUs`,30,[l > 1 ? `EL7${l - 1}10` : "E6010", "C2045"],"elec");
+      a(`EL7${l}20`,`Level ${l}: STS and PDU installation`,15,[`EL7${l}10`],"elec");
+      g.box(`EL7${l}10`, [].concat(...R(10, 80, 7).map(x => R(10, 50, 10).map(z => [x, (l - 1) * fh + 1.2, z, .6, 2.2, 7]))));
+      g.box(`EL7${l}20`, R(5, 85, 10).map(x => [x, (l - 1) * fh + 1, 56, 1.4, 2, .9]));
+    }
+    a("F7010","Fire protection, all levels",45,["C2045"],"fire");
+    a("X9010","Commissioning L1 to L5",40,["EL7420","R5010","A1030","F7010"],"mech");
+    a("X9020","Turnover",0,["X9010"]);
+    g.ctx("bldg", "box", [H.exist(25, 20, 40, 30, 7), H.exist(70, 40, 35, 35, 9)], {hideWhen:"A1010"});
+    g.box("A1010", [[45, .05, 30, 95, .1, 65]]); g.box("A1020", [[45, -.6, 30, 110, .9, 75]]);
+    g.box("C2010", [].concat(H.pads(R(0, 90, 10), R(0, 60, 10), 2.6, 1.2), H.slab(-.5, 90.5, -.5, 60.5, -.25, .25, 5)));
+    g.box("E6010", [].concat(...R(0, L - 1, 1).map(l => H.ring(-.4, -.4, 90.4, 60.4, l * fh, fh, 5, .25))));
+    g.box("R5010", [].concat(H.cols(R(10, 80, 10), R(10, 50, 20), L * fh, 5, .35), R(12, 78, 11).map(x => [x, L * fh + 6.5, 30, 8, 3, 30])), {roof:true});
+    g.box("A1030", [].concat(R(5, 85, 8).map(x => [x, 2, -14, 6, 4, 3.4]), R(5, 85, 8).map(x => [x, 2, 74, 6, 4, 3.4])));
+    g.cyl("F7010", [].concat(...R(0, L - 1, 1).map(l => R(5, 85, 8).map(x => H.pipeZ(1, 59, l * fh + fh - 1, x, .06)))));
+  }
+});
+
+P4D.push({
+  key:"dc-coldstorage", sector:"dc", code:"US-DC · DEMO 3", kind:"مركز توزيع مبرد بالألواح المرفوعة",
+  title:"مركز توزيع مبرد",
+  sub:"مستودع مبرد بنظام الألواح المرفوعة بمساحة 465,000 قدم مربع في أربع مناطق تنفيذ. تُصب الألواح على البلاطة ثم تُرفع، ويتبع الهيكل المعدني فرق التركيب منطقة بعد منطقة، ثم الأسقف وغرفة التجميد والتبريد.",
+  ntp:[2026, 2, 2], dd:.48, cam:{p:[-215, 235, -225], t:[120, 0, 80]}, sel:"T3220",
+  context:{type:"industrial", bounds:[-60, -60, 300, 245], seed:7, fenceUntil:"V9040"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g), Z = ["A","B","C","D"];
+    a("A1000","Notice to proceed",0);
+    a("A1010","Permits, mobilization and SWPPP",15,["A1000"],"site");
+    a("A1020","Vibratory pier ground improvement",30,["A1010"],"site");
+    a("A1030","Mass grading and building pad certification",25,["A1010"],"site");
+    a("A1040","Site underground utilities",45,["A1030"],"site");
+    a("P1000","Structural steel shop drawings and approval",25,["A1000"],"proc");
+    a("P1010","Structural steel fabrication and delivery",60,["P1000"],"proc");
+    a("P1020","Refrigeration equipment procurement",110,["A1000"],"proc");
+    a("P1030","Insulated metal panel procurement",70,["A1000"],"proc");
+    const COLX = R(15, 225, 15), COLZ = R(15, 165, 15);
+    Z.forEach((z, k) => {
+      const n = k * 100, id = (b, o) => b.charAt(0) + (Number(b.slice(1)) + n + o), p = k > 0, x0 = k * 60, x1 = x0 + 60, inZ = x => x >= x0 && x < x1 + (k === 3 ? 1 : 0);
+      a(id("C2000",10),`Footings and underslab utilities, Zone ${z}`,12,["A1020","A1030"].concat(p ? [id("C2000",-90)] : []),"conc");
+      a(id("C2000",20),`Slab on grade / casting bed, Zone ${z}`,10,[id("C2000",10)].concat(p ? [id("C2000",-80)] : []),"conc");
+      a(id("T3000",10),`Cast tilt-up panels, Zone ${z}`,14,[id("C2000",20)].concat(p ? [id("T3000",-90)] : []),"shell");
+      a(id("T3000",20),`Erect tilt-up panels, Zone ${z}`,7,[id("T3000",10)].concat(p ? [id("T3000",-80)] : []),"shell");
+      a(id("S4000",10),`Steel columns, girders and joists, Zone ${z}`,12,[id("T3000",20),"P1010"].concat(p ? [id("S4000",-90)] : []),"steel");
+      a(id("S4000",20),`Roof deck, Zone ${z}`,8,[id("S4000",10)].concat(p ? [id("S4000",-80)] : []),"roof");
+      a(id("R5000",10),`Roofing membrane, Zone ${z}`,12,[id("S4000",20)].concat(p ? [id("R5000",-90)] : []),"roof");
+      if (k) a(id("E6000",10),`Insulated metal panel freezer box, Zone ${z}`,15,[id("R5000",10),"P1030"].concat(k > 1 ? [id("E6000",-90)] : []),"env");
+      const foot = [];
+      COLX.filter(inZ).forEach(x => COLZ.forEach(zz => foot.push([x, -.4, zz, 2.6, .8, 2.6])));
+      foot.push([(x0 + x1) / 2, -.4, .3, 60, .8, 1.2], [(x0 + x1) / 2, -.4, 179.7, 60, .8, 1.2]);
+      if (k === 0) foot.push([.3, -.4, 90, 1.2, .8, 180]); if (k === 3) foot.push([239.7, -.4, 90, 1.2, .8, 180]);
+      g.box(id("C2000",10), foot);
+      g.box(id("C2000",20), R(x0 + 3, x1 - 3, 6).map(x => [x, .1, 90, 6, .2, 180]));
+      const pans = [];
+      R(x0 + 5, x1 - 5, 10).forEach(x => { pans.push({x, z:0, f:"S", w:9.8, h:13.5}); pans.push({x, z:180, f:"N", w:9.8, h:13.5}); });
+      if (k === 0) R(5, 175, 10).forEach(zz => pans.push({x:0, z:zz, f:"W", w:9.8, h:13.5}));
+      if (k === 3) R(5, 175, 10).forEach(zz => pans.push({x:240, z:zz, f:"E", w:9.8, h:13.5}));
+      g.tilt(id("T3000",20), id("T3000",10), pans);
+      const st = [];
+      COLX.filter(inZ).forEach(x => { COLZ.forEach(zz => st.push([x, 6.5, zz, .45, 13, .45])); st.push([x, 12.7, 90, .5, 1.1, 180]); });
+      R(x0 + 7.5, x1 - 7.5, 15).forEach(x => R(2.5, 177.5, 2.5).forEach(zz => st.push([x, 12.95, zz, 15, .35, .15])));
+      g.box(id("S4000",10), st);
+      g.box(id("S4000",20), R(x0 + 1.5, x1 - 1.5, 3).map(x => [x, 13.25, 90, 3, .12, 180]), {roof:true});
+      g.box(id("R5000",10), R(x0 + 1.5, x1 - 1.5, 3).map(x => [x, 13.4, 90, 3, .18, 180]), {roof:true});
+      if (k) {
+        const imp = [];
+        R(x0 + 1.5, x1 - 1.5, 3).forEach(x => { imp.push([x, 6, 25, 3, 12, .25]); imp.push([x, 6, 165, 3, 12, .25]); });
+        if (k === 1) R(26.5, 163.5, 3).forEach(zz => imp.push([60, 6, zz, .25, 12, 3]));
+        imp.push([(x0 + x1) / 2, 12.2, 95, 60, .2, 140]);
+        g.box(id("E6000",10), imp);
+      }
+    });
+    a("M7010","Mini penthouses, Zones B-C",15,["R5210"],"mech");
+    a("M7020","Mini penthouses, Zone D",15,["R5310","M7010"],"mech");
+    a("M7100","Engine room structure",25,["C2320"],"conc");
+    a("M7110","Refrigeration equipment set",20,["M7100","P1020"],"mech");
+    a("M7120","Refrigeration piping",40,["M7110","M7020","E6310"],"mech");
+    a("F8010","Fire pump house",30,["A1040"],"fire");
+    a("F8020","Fire sprinkler system",45,["S4320","F8010"],"fire");
+    a("O8510","Office build-out",55,["R5010"],"arch");
+    a("O8520","Dock doors and levelers",25,["T3320"],"arch");
+    a("G8610","Guardhouses",35,["A1040"],"arch");
+    a("V9010","Curb and gutter",15,["A1040","T3320"],"pave");
+    a("V9020","Concrete truck court",30,["V9010"],"pave");
+    a("V9030","Asphalt paving",20,["V9010"],"pave");
+    a("V9040","Striping and signage",5,["V9020","V9030"],"pave");
+    a("X9510","Freezer pull-down to design temperature",20,["M7120","E6310","F8020"],"mech");
+    a("X9520","Final inspections",10,["X9510","O8510","O8520","V9040","G8610"]);
+    a("X9530","Substantial completion / TCO",0,["X9520"]);
+    g.box("A1030", R(0, 260, 13).map(x => [x - 3.5, -.7, 90, 13, 1, 210]));
+    g.cyl("A1020", [].concat(...[0, 1, 2, 3].map(k => [].concat(...R(k * 60 + 5, k * 60 + 55, 10).map(x => R(8, 172, 12).map(z => [x, -.15, z, 1.4, .3, 1.4]))))));
+    g.cyl("A1040", [H.pipeX(0, 240, -.6, -6, .5), H.pipeZ(-5, 185, -.6, -6, .5), H.pipeX(0, 240, -.6, 190, .5), H.pipeZ(-5, 185, -.6, 250, .5), H.pipeX(-45, -5, -.6, 155, .5)]);
+    g.box("M7100", [[252, .2, 90, 24, .4, 40], [264, 7, 90, .4, 14, 40], [252, 7, 70, 24, 14, .4], [252, 7, 110, 24, 14, .4], [252, 14, 90, 24, .4, 40]]);
+    g.cyl("M7110", R(74, 106, 6.4).map(z => [250, 2, z, 3, 4, 3]));
+    g.cyl("M7120", [].concat(R(66, 234, 12).map(x => [x, 15, 92, .5, 12, .5, 0, 0, Math.PI / 2]), [[248, 15, 92, .6, 8, .6, 0, 0, Math.PI / 2], [246, 10, 92, .6, 10, .6]]), {roof:true});
+    g.box("M7010", [[85, 60], [85, 125], [150, 60], [150, 125]].map(([x, z]) => [x, 16.6, z, 10, 6, 6]), {roof:true});
+    g.box("M7020", [[200, 60], [200, 125], [228, 60], [228, 125]].map(([x, z]) => [x, 16.6, z, 10, 6, 6]), {roof:true});
+    g.box("F8010", [[-25, 3, 158, 10, 6, 8]]);
+    g.cyl("F8020", R(3, 237, 6).map(x => H.pipeZ(1, 179, 12.2, x, .12)));
+    const off = [[26, .3, 12, 44, .2, 20], [26, 5, 12, 44, .25, 20]];
+    R(8, 44, 6).forEach(x => { off.push([x, 2.5, 12, .2, 4.8, 18]); off.push([x, 7.4, 12, .2, 4.6, 18]); });
+    off.push([26, 2.5, 22, 44, 4.8, .2], [26, 7.4, 22, 44, 4.6, .2]);
+    g.box("O8510", off);
+    g.box("O8520", R(66, 234, 4.2).map(x => [x, 2.1, 180.35, 3, 3.6, .3]));
+    g.box("G8610", [[-40, 2, -35, 7, 4, 5], [278, 2, 222, 7, 4, 5]]);
+    g.box("V9010", [[120, .15, -8, 244, .3, .5], [120, .15, 232, 244, .3, .5], [-4, .15, -32, .5, .3, 48]]);
+    g.box("V9020", R(5, 235, 10).map(x => [x, .05, 206, 10, .2, 50]));
+    g.box("V9030", R(5, 235, 10).map(x => [x, .02, -32, 10, .14, 46]));
+    g.box("V9040", [].concat(R(4, 236, 3.2).map(x => [x, .12, -44, .15, .05, 5.5]), R(4, 236, 3.2).map(x => [x, .12, -20, .15, .05, 5.5])));
+    g.ctx("car", "box", R(6, 234, 3.2).filter((x, i) => i % 3).map(x => [x, -.1, -44, 1.8, 1.4, 4.4]), {showWhen:"V9040"});
+    g.ctx("bldg", "box", R(66, 234, 8.4).filter((x, i) => i % 4).map(x => [x, 1.9, 196, 2.6, 3.8, 16]), {showWhen:"V9020"});
+  }
+});
+
+</script>
+<script>
+/* Residential demonstration models. */
+
+P4D.push({
+  key:"res-tower", sector:"res", code:"US-RES · DEMO 1", kind:"برج سكني شاهق",
+  title:"برج سكني من 32 طابقاً",
+  sub:"منصة وبرج على أساسات عميقة. يُركَّب الونش البرجي بعد صب اللبشة، ويرتفع الهيكل بدورات من ثلاثة طوابق، وتتبعه الواجهات والأعمال الداخلية واستكمال فتحات المصعد الإنشائي على بعد بضعة طوابق، قبل فك الونش ومعاينة المبنى لشهادة الإشغال المؤقتة.",
+  ntp:[2025, 5, 2], dd:.5, cam:{p:[-140, 120, -150], t:[30, 45, 25]},
+  context:{type:"urban", bounds:[-15, -15, 75, 65], seed:151, fenceUntil:"X9020"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g), PH = 4.5, TH = 3.2, PODL = 5, TOP = 32;
+    const lvY = l => l <= PODL ? (l - 1) * PH : PODL * PH + (l - PODL - 1) * TH;
+    const fp = l => l <= PODL ? [0, 60, 0, 50] : [15, 45, 10, 40];
+    a("A1000","Notice to proceed",0);
+    a("P1010","Buyout, permits and curtain wall procurement",60,["A1000"],"proc");
+    a("A1010","Early works and dewatering",15,["A1000"],"site");
+    a("C2010","Deep foundations: auger-cast piles",40,["A1010"],"conc");
+    a("C2020","Mat foundation pour",25,["C2010"],"conc");
+    a("A1020","Tower crane erection",8,["C2020"],"steel");
+    const groupsL = [[1, 2], [3, 5]]; for (let l = 6; l <= TOP; l += 3) groupsL.push([l, Math.min(TOP, l + 2)]);
+    groupsL.forEach(([l0, l1], i) => {
+      const id = `C3${String(i + 1).padStart(2, "0")}0`, pod = l1 <= PODL;
+      a(id,`Structure, levels ${l0} to ${l1}`,pod ? 22 : 15,[i ? `C3${String(i).padStart(2, "0")}0` : "A1020"],"conc");
+      const it = [];
+      for (let l = l0; l <= l1; l++) {
+        const [x0, x1, z0, z1] = fp(l), h = l <= PODL ? PH : TH, y = lvY(l);
+        it.push(...H.cols(R(x0, x1, l <= PODL ? 10 : 7.5), R(z0, z1, l <= PODL ? 10 : 7.5), y, h - .25, .7));
+        it.push([30, y + h / 2, 25, 8, h, .3], [30, y + h / 2, 21, 8, h, .3], [26, y + h / 2, 23, .3, h, 4], [34, y + h / 2, 23, .3, h, 4]);
+        it.push(...H.slab(x0 - .5, x1 + .5, z0 - .5, z1 + .5, y + h - .25, .25, 5));
+      }
+      g.box(id, it, l1 === TOP ? {} : {});
+      if (l0 >= 3) {
+        const fid = `E6${String(i + 1).padStart(2, "0")}0`, iid = `I8${String(i + 1).padStart(2, "0")}0`;
+        a(fid,`Facade, levels ${l0} to ${l1}`,15,[id, i > 1 ? `E6${String(i).padStart(2, "0")}0` : "P1010"],"env");
+        a(iid,`Interior build-out, levels ${l0} to ${l1}`,30,[fid, i > 1 ? `I8${String(i).padStart(2, "0")}0` : fid],"arch");
+        const fe = [], ie = [];
+        for (let l = l0; l <= l1; l++) {
+          const [x0, x1, z0, z1] = fp(l), h = l <= PODL ? PH : TH, y = lvY(l);
+          fe.push(...H.ring(x0 - .6, z0 - .6, x1 + .6, z1 + .6, y, h, 5, .12));
+          ie.push(...R(x0 + 4, x1 - 4, 6).map(x => [x, y + h / 2 - .2, (z0 + z1) / 2, .12, h - .6, z1 - z0 - 4]));
+        }
+        g.box(fid, fe); g.box(iid, ie);
+      }
+    });
+    const last = `C3${String(groupsL.length).padStart(2, "0")}0`, lastF = `E6${String(groupsL.length).padStart(2, "0")}0`, lastI = `I8${String(groupsL.length).padStart(2, "0")}0`;
+    a("R5010","Roofing and rooftop mechanical",20,[last],"roof");
+    a("M7010","Elevators 1 to 4",60,[last],"mech");
+    a("M7020","MEP risers and systems",80,["C3040"],"mech");
+    a("E6900","Buckhoist comeback and seal-up",20,[lastF, "M7010"],"env");
+    a("A1030","Tower crane dismantle",6,["R5010", lastF],"steel");
+    a("A1040","Hardscape, landscape and utility vault",30,["A1030"],"site");
+    a("X9010","Systems and final inspections",20,[lastI, "E6900", "M7020", "A1040"]);
+    a("X9020","TCO / substantial completion",0,["X9010"]);
+    const topY = lvY(TOP) + TH;
+    g.box("A1010", [[30, -.5, 25, 75, .6, 65]]);
+    g.cyl("C2010", [].concat(...R(2, 58, 4).map(x => R(2, 48, 4).map(z => [x, -1.5, z, .8, 2, .8]))));
+    g.box("C2020", [[30, -.5, 25, 62, 1.2, 52]]);
+    g.box("A1020", [[-4, 1, 25, 6, 2, 6]]);
+    g.ctx("bldg", "box", [[-4, (topY + 14) / 2, 25, 2, topY + 14, 2], [10, topY + 13, 25, 60, 1.2, 1.2]], {showWhen:"A1020", hideWhen:"A1030"});
+    g.box("R5010", [[30, topY + .2, 25, 31, .3, 31], [24, topY + 2, 20, 6, 3, 5], [36, topY + 2, 30, 6, 3, 5]], {roof:true});
+    g.box("M7010", [[30, topY / 2, 23, 7, topY, 3.6]]);
+    g.cyl("M7020", [[22, topY / 2, 18, .5, topY, .5], [38, topY / 2, 18, .5, topY, .5]]);
+    g.box("E6900", [[45.8, topY / 2, 25, .3, topY, 4]]);
+    g.box("A1040", [].concat(R(-10, 70, 10).map(x => [x + 5, .02, -8, 10, .15, 10]), [[30, .3, 56, 60, .3, 8]]));
+  }
+});
+
+P4D.push({
+  key:"res-condo", sector:"res", code:"US-RES · DEMO 2", kind:"عمارة سكنية من 11 طابقاً بخرسانة لاحقة الشد",
+  title:"عمارة سكنية فاخرة على الواجهة المائية",
+  sub:"عمارة سكنية من 11 طابقاً بخرسانة لاحقة الشد: الخوازيق والقواعد، ثم طابقاً بعد طابق للعناصر الرأسية والبلاطة لاحقة الشد والشد وإعادة الشدات. تتبعها النوافذ والأعمال الداخلية في حزم من ثلاثة طوابق، ثم السقف وسطح الخدمات وجولات استلام الوحدات في النهاية.",
+  ntp:[2023, 10, 6], dd:.55, cam:{p:[-80, 75, -95], t:[35, 18, 15]},
+  context:{type:"urban", bounds:[-15, -15, 85, 45], seed:161, fenceUntil:"X9020", clear:(x, z) => z > 60},
+  setup(g){
+    const {R} = H, a = g.act.bind(g), L = 11, fh = 3.3;
+    a("A1000","Notice of commencement",0);
+    a("P1010","Window and elevator procurement",80,["A1000"],"proc");
+    a("A1010","Sitework and production piling",35,["A1000"],"conc");
+    a("C2010","Pile caps, footings and ground slab",25,["A1010"],"conc");
+    for (let l = 1; l <= L; l++) {
+      a(`C30${String(l).padStart(2, "0")}`,`Level ${l}: vertical, PT deck, stressing and reshore`,10,[l > 1 ? `C30${String(l - 1).padStart(2, "0")}` : "C2010"],"conc");
+      const y = (l - 1) * fh;
+      g.box(`C30${String(l).padStart(2, "0")}`, [].concat(H.cols(R(0, 70, 7), R(0, 25, 8.33), y, fh - .25, .5), [[35, y + fh / 2, 12.5, 8, fh, .3]], H.slab(-1, 71, -1.5, 26.5, y + fh - .25, .25, 4)));
+    }
+    for (let k = 0; k < 4; k++) {
+      const l0 = k * 3 + 1, l1 = Math.min(L, l0 + 2), wid = `E60${k + 1}0`, iid = `I80${k + 1}0`;
+      a(wid,`Windows and sliding doors, levels ${l0} to ${l1}`,15,[`C30${String(Math.min(L, l1 + 1)).padStart(2, "0")}`, "P1010"].concat(k ? [`E60${k}0`] : []),"env");
+      a(iid,`Unit framing, MEP rough-in and finishes, levels ${l0} to ${l1}`,40,[wid].concat(k ? [`I80${k}0`] : []),"arch");
+      const fe = [], ie = [];
+      for (let l = l0; l <= l1; l++) { const y = (l - 1) * fh; fe.push(...H.ring(-.8, -1.2, 70.8, 26.2, y, fh, 4, .1)); ie.push(...R(5, 65, 5).map(x => [x, y + 1.5, 12.5, .12, 2.7, 22])); }
+      g.box(wid, fe); g.box(iid, ie);
+    }
+    a("R5010","Roof insulation and TPO",15,["C3011"],"roof");
+    a("M7010","Elevators and MEP risers",50,["C3011","P1010"],"mech");
+    a("A1020","Pool deck and amenity area",30,["R5010"],"site");
+    a("X9010","Owner walkthroughs and closeout",20,["I8040","M7010","A1020"],"arch");
+    a("X9020","Certificate of occupancy",0,["X9010"]);
+    g.ctx("water", "box", [[35, -1.05, 200, 700, .1, 280]]);
+    g.box("A1010", [].concat(...R(2, 68, 4.5).map(x => R(1, 24, 4.6).map(z => [x, -1.6, z, .6, 2, .6]))));
+    g.box("C2010", [[35, -.4, 12.5, 72, .8, 28]]);
+    g.box("R5010", [[35, L * fh + .15, 12.5, 72, .25, 28.5], [30, L * fh + 1.5, 12.5, 8, 2.5, 6]], {roof:true});
+    g.box("M7010", [[35, L * fh / 2, 10, 7, L * fh, 3]]);
+    g.box("A1020", [[35, .3, 36, 60, .4, 16], [35, .45, 37, 22, .2, 7]]);
+  }
+});
+
+P4D.push({
+  key:"res-multifamily", sector:"res", code:"US-RES · DEMO 3", kind:"مجمع سكني بنمط الحدائق",
+  title:"مجمع شقق سكنية بنمط الحدائق",
+  sub:"ثمانية مبانٍ سكنية من ثلاثة طوابق بهياكل خشبية ونادٍ اجتماعي تُبنى بتسلسل متتابع. تنتقل كل فرقة إلى المبنى التالي فور تسليم قاعدته، فتتدفق البلاطات والهياكل والأسقف والتشطيبات عبر الموقع مبنى بعد مبنى.",
+  ntp:[2025, 8, 15], dd:.5, cam:{p:[-110, 120, -120], t:[70, 0, 60]},
+  context:{type:"campus", bounds:[-15, -20, 165, 135], seed:171, fenceUntil:"X9020"},
+  setup(g){
+    const {R} = H, a = g.act.bind(g), fh = 3.1;
+    a("A1000","Notice to proceed",0);
+    a("A1010","Off-site improvements",20,["A1000"],"site");
+    a("A1020","Site utilities and infrastructure",35,["A1010"],"site");
+    const BL = []; [0, 1, 2, 3].forEach(c => [0, 1].forEach(r => BL.push([c * 40, r * 62 + 10])));
+    BL.forEach(([x, z], i) => {
+      const k = i + 1, x0 = x, x1 = x + 34, z0 = z, z1 = z + 16, pf = i ? `M3${i}10` : null;
+      a(`C2${k}10`,`Building ${k}: pad release and slab`,8,["A1020"].concat(i ? [`C2${i}10`] : []),"conc");
+      a(`M3${k}10`,`Building ${k}: wood framing, sheathing and roof trusses`,22,[`C2${k}10`].concat(pf ? [pf] : []),"shell");
+      a(`R5${k}10`,`Building ${k}: roofing`,6,[`M3${k}10`].concat(i ? [`R5${i}10`] : []),"roof");
+      a(`I8${k}10`,`Building ${k}: MEP rough-in, siding and interiors`,35,[`R5${k}10`].concat(i ? [`I8${i}10`] : []),"arch");
+      g.box(`C2${k}10`, H.slab(x0, x1, z0, z1, -.15, .25, 4.25));
+      const fr = [];
+      [0, 1, 2].forEach(l => { fr.push(...H.ring(x0, z0, x1, z1, l * fh, fh - .2, 4.25, .18)); fr.push(...H.slab(x0, x1, z0, z1, (l + 1) * fh - .2, .2, 8.5)); });
+      g.box(`M3${k}10`, fr);
+      g.box(`R5${k}10`, [[(x0 + x1) / 2, 3 * fh + 1.6, z0 + 4.3, x1 - x0 + 1, .2, 9.4, .6, 0, 0], [(x0 + x1) / 2, 3 * fh + 1.6, z1 - 4.3, x1 - x0 + 1, .2, 9.4, -.6, 0, 0]], {roof:true});
+      g.box(`I8${k}10`, [].concat(H.ring(x0 - .15, z0 - .15, x1 + .15, z1 + .15, 0, 3 * fh, 4.25, .08), ...[0, 1, 2].map(l => R(x0 + 4, x1 - 4, 6).map(xx => [xx, l * fh + 1.4, (z0 + z1) / 2, .12, 2.6, 14]))));
+    });
+    a("C2910","Clubhouse: slab and framing",25,["C2410"],"shell");
+    a("I8910","Clubhouse: finishes",30,["C2910"],"arch");
+    a("A1030","Pool, pickleball courts and amenities",30,["C2910"],"site");
+    a("V9010","Paving, hardscape and landscape",40,["I8410","A1030"],"pave");
+    a("X9010","Final inspections and owner training",15,["I8810","I8910","V9010"]);
+    a("X9020","Final completion",0,["X9010"]);
+    g.box("A1010", [[75, .02, -12, 170, .15, 8]]);
+    g.cyl("A1020", [H.pipeX(-10, 160, -.6, 45, .4), H.pipeX(-10, 160, -.6, 105, .35), H.pipeZ(-10, 130, -.6, 162, .4)]);
+    g.box("C2910", [[75, .1, 48, 22, .2, 12], ...H.ring(64, 42, 86, 54, 0, 4.5, 3.7, .2)]);
+    g.box("I8910", [[75, 5, 48, 23, .25, 13], ...R(68, 82, 5).map(x => [x, 2, 48, .12, 3.8, 10])]);
+    g.box("A1030", [[105, .2, 48, 16, .3, 8], [105, .3, 48, 12, .2, 5], [130, .05, 48, 18, .1, 10]]);
+    g.box("V9010", [].concat(R(-10, 160, 10).map(x => [x + 5, .03, 38, 10, .12, 4]), R(-10, 160, 10).map(x => [x + 5, .03, 92, 10, .12, 6]), R(0, 150, 10).map(x => [x + 5, .03, -4, 10, .12, 10])));
+    g.ctx("car", "box", R(2, 150, 3.2).filter((x, i) => i % 3).map(x => [x, -.1, -4, 1.8, 1.4, 4.4]), {showWhen:"X9020"});
+  }
+});
+
+</script>
+<script>
+(function(){
+const view = document.getElementById("view");
+if (!window.THREE || !THREE.OrbitControls) { view.innerHTML = '<p class="err">تعذّر تحميل مكتبة العرض ثلاثي الأبعاد. تحقق من الاتصال وأعد تحميل الصفحة.</p>'; return; }
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const SECTORS = [["fed","فيدرالي"],["hc","الرعاية الصحية"],["edu","التعليم"],["wtr","المياه"],["road","الطرق"],["dc","مراكز البيانات"],["res","السكني"]];
+const TRADE = {site:"أعمال الموقع", conc:"الخرسانة", shell:"المباني والخرسانة سابقة الصب والألواح المرفوعة", steel:"الهيكل المعدني", roof:"البلاطات والأسقف", env:"الغلاف والتكسيات",
+  mech:"الأعمال الميكانيكية والعمليات", elec:"الكهرباء", fire:"الحماية من الحريق", pave:"الرصف والعلامات", arch:"الأعمال الداخلية والتشطيبات"};
+
+// ---------- definition API ----------
+const rng = (a, b, s) => { const o = []; for (let x = a; x <= b + 1e-6; x += s) o.push(+x.toFixed(3)); return o; };
+function makeG(){
+  const g = {acts:[], geo:[], rng};
+  g.act = (id, name, dur, preds, trade) => g.acts.push({id, name, dur, preds:preds || [], trade:trade || "mile"});
+  ["box","cyl","sph","cone"].forEach(s => g[s] = (act, items, opt) => g.geo.push({act, shape:s, items, opt:opt || {}}));
+  g.tilt = (act, cast, pans, opt) => g.geo.push({act, shape:"tilt", cast, pans, opt:opt || {}});
+  g.ctx = (kind, shape, items, opt) => g.geo.push({ctx:kind, shape, items, opt:opt || {}});
+  g.grid = (xs, zs, f) => { const o = []; xs.forEach(x => zs.forEach(z => o.push(f(x, z)))); return o; };
+  return g;
+}
+
+// ---------- renderer ----------
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+view.prepend(renderer.domElement);
+const scene = new THREE.Scene(); scene.fog = new THREE.Fog(0xdde7ee, 700, 1800);
+const camera = new THREE.PerspectiveCamera(38, 1.6, 1, 6000);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.48;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, 0.85));
+const sun = new THREE.DirectionalLight(0xffffff, 0.75); sun.position.set(-200, 400, -120); scene.add(sun);
+const groundMat = new THREE.MeshStandardMaterial({color:0xcccccc, roughness:1});
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), groundMat); ground.rotation.x = -Math.PI / 2; ground.position.y = -1.2; scene.add(ground);
+const GEOM = {box:new THREE.BoxGeometry(1,1,1), cyl:new THREE.CylinderGeometry(.5,.5,1,12), sph:new THREE.IcosahedronGeometry(.5,1), cone:new THREE.ConeGeometry(.5,1,10)};
+const e3 = new THREE.Euler(), q = new THREE.Quaternion(), v3 = new THREE.Vector3(), s3 = new THREE.Vector3();
+const toM = it => { e3.set(it[6] || 0, it[7] || 0, it[8] || 0); q.setFromEuler(e3); return new THREE.Matrix4().compose(v3.set(it[0], it[1], it[2]), q, s3.set(it[3], it[4], it[5])); };
+
+let P = null, A = [], byId = {}, finish = 1, DD = 0, groups = [], ctxMeshes = [], C = {};
+const st = {crit:false, roofOff:true, ghost:true, sel:null, hidden:new Set()};
+
+// ---------- surroundings ----------
+function genContext(g, c){
+  if (!c) return;
+  let seed = c.seed || 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const [x0, z0, x1, z1] = c.bounds, cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, W = x1 - x0, D = z1 - z0, R = Math.max(W, D);
+  const T = c.type || "industrial";
+  const roads = [], marks = [], blds = [], lots = [];
+  const roadZ = z0 - 28, roadX = x1 + 30;
+  if (T !== "highway") {
+    roads.push([cx, -1.05, roadZ, R * 4, .2, 16]); roads.push([roadX, -1.05, cz, 16, .2, R * 4]);
+    rng(cx - R * 2, cx + R * 2, 12).forEach(x => marks.push([x, -.93, roadZ, 5, .05, .35]));
+    rng(cz - R * 2, cz + R * 2, 12).forEach(z => marks.push([roadX, -.93, z, .35, .05, 5]));
+  }
+  if (T === "urban") [-1, 1, 2].forEach(k => { roads.push([cx, -1.05, roadZ + k * 140 + (k > 0 ? D : 0), R * 4, .2, 14]); roads.push([x0 - 30 - (k + 1) * 130, -1.05, cz, 14, .2, R * 4]); });
+  const isRoad = (x, z, m) => roads.some(r => Math.abs(x - r[0]) < r[3] / 2 + m && Math.abs(z - r[2]) < r[5] / 2 + m);
+  const inSite = (x, z, m) => x > x0 - m && x < x1 + m && z > z0 - m && z < z1 + m;
+  const nb = {industrial:[14, 8, 16, 50, 110], urban:[40, 15, 90, 25, 50], campus:[10, 6, 14, 30, 70], rural:[5, 5, 9, 15, 35], highway:[8, 4, 9, 12, 25]}[T];
+  for (let i = 0, tries = 0; i < nb[0] && tries < 600; tries++) {
+    const ang = rnd() * Math.PI * 2, dist = R * .7 + 40 + rnd() * R * 1.1, x = cx + Math.cos(ang) * dist, z = cz + Math.sin(ang) * dist;
+    const w = nb[3] + rnd() * (nb[4] - nb[3]), d = nb[3] + rnd() * (nb[4] - nb[3]) * .8, h = nb[1] + rnd() * (nb[2] - nb[1]);
+    if ((c.clear && c.clear(x, z)) || inSite(x, z, Math.max(w, d) / 2 + 20) || isRoad(x, z, Math.max(w, d) / 2 + 6) || blds.some(b => Math.abs(b[0] - x) < (b[3] + w) / 2 + 12 && Math.abs(b[2] - z) < (b[5] + d) / 2 + 12)) continue;
+    blds.push([x, h / 2 - 1, z, w, h, d]); if (T !== "urban") lots.push([x, -1.08, z + d / 2 + 12, w + 8, .15, 22]); i++;
+  }
+  const trees = [], nT = {industrial:280, urban:120, campus:420, rural:650, highway:1100}[T];
+  if (T !== "highway") rng(cx - R * 1.6, cx + R * 1.6, 15).forEach(x => { trees.push([x, roadZ - 14]); trees.push([x + 7, roadZ + 13]); });
+  for (let i = 0; i < nT; i++) {
+    const x = T === "highway" ? x0 - 150 + rnd() * (W + 300) : cx + (rnd() * 2 - 1) * R * 1.9;
+    const z = T === "highway" ? cz + (rnd() * 2 - 1) * 260 : cz + (rnd() * 2 - 1) * R * 1.9;
+    if (inSite(x, z, 12) || isRoad(x, z, 6) || blds.some(b => Math.abs(x - b[0]) < b[3] / 2 + 5 && Math.abs(z - b[2]) < b[5] / 2 + 30)) continue;
+    if (c.clear && c.clear(x, z)) continue;
+    trees.push([x, z]);
+  }
+  if (T === "highway") {   // farm fields either side of the road
+    const fields = []; for (let x = x0 - 100; x < x1 + 100; x += 90 + rnd() * 60) [-1, 1].forEach(sd => fields.push([x + 40, -1.12, cz + sd * (70 + rnd() * 60), 70 + rnd() * 30, .05, 60 + rnd() * 40]));
+    g.ctx("lawn", "box", fields);
+  }
+  const ts = trees.map(() => .8 + rnd() * .6);
+  g.ctx("road", "box", roads.concat(lots)); g.ctx("mark", "box", marks); g.ctx("bldg", "box", blds);
+  g.ctx("trunk", "cyl", trees.map(([x, z], i) => [x, 1.2 * ts[i] - 1, z, .8 * ts[i], 2.4 * ts[i], .8 * ts[i]]));
+  g.ctx("tree", "sph", trees.map(([x, z], i) => [x, 5 * ts[i] - 1, z, 7 * ts[i], 8.5 * ts[i], 7 * ts[i]]));
+  if (c.fence !== false) g.ctx("fence", "box", [[cx, .8, z0 - 6, W + 12, 2, .1], [cx, .8, z1 + 6, W + 12, 2, .1], [x0 - 6, .8, cz, .1, 2, D + 12], [x1 + 6, .8, cz, .1, 2, D + 12]], {alpha:.45, hideWhen:c.fenceUntil});
+}
+
+// ---------- load a project ----------
+function clearScene(){
+  groups.concat(ctxMeshes).forEach(m => { [m.mesh, m.ghost].forEach(x => { if (x) { scene.remove(x); x.material.dispose(); } }); });
+  groups = []; ctxMeshes = [];
+}
+function load(p){
+  setPlay(false); clearScene(); P = p;
+  const g = makeG(); p.setup(g); genContext(g, p.context);
+  A = g.acts; byId = Object.fromEntries(A.map(a => [a.id, a]));
+  A.forEach(a => a.succ = []); A.forEach(a => a.preds.forEach(x => { if (!byId[x]) console.warn("missing pred", x, "for", a.id); else byId[x].succ.push(a.id); }));
+  // forward pass in logic order (a predecessor may be listed after its successor)
+  const order = [], seen = new Set(), visit = a => { if (seen.has(a.id)) return; seen.add(a.id); a.preds.forEach(x => byId[x] && visit(byId[x])); order.push(a); };
+  A.forEach(visit);
+  order.forEach(a => { a.es = Math.max(0, ...a.preds.filter(x => byId[x]).map(x => byId[x].ef)); a.ef = a.es + a.dur; });
+  finish = Math.max(...A.map(a => a.ef));
+  [...order].reverse().forEach(a => { a.lf = a.succ.length ? Math.min(...a.succ.map(s => byId[s].ls)) : finish; a.ls = a.lf - a.dur; a.tf = a.ls - a.es; a.crit = a.tf === 0; });
+  g.geo.forEach(o => {
+    const n = o.shape === "tilt" ? o.pans.length : o.items.length; if (!n) return;
+    const geom = GEOM[o.shape === "tilt" ? "box" : o.shape];
+    if (o.ctx) {
+      const mesh = new THREE.InstancedMesh(geom, new THREE.MeshStandardMaterial({roughness:.95, transparent:!!o.opt.alpha, opacity:o.opt.alpha || 1}), n);
+      o.items.forEach((it, i) => mesh.setMatrixAt(i, toM(it))); scene.add(mesh);
+      ctxMeshes.push({mesh, kind:o.ctx, opt:o.opt}); return;
+    }
+    const a = byId[o.act]; if (!a) { console.warn("geometry for missing activity", o.act); return; }
+    const mesh = new THREE.InstancedMesh(geom, new THREE.MeshStandardMaterial({roughness:.8, metalness:a.trade === "steel" ? .3 : .05}), n);
+    const ghost = new THREE.InstancedMesh(geom, new THREE.MeshBasicMaterial({transparent:true, opacity:.07, depthWrite:false}), n);
+    if (o.shape !== "tilt") o.items.forEach((it, i) => { const m = toM(it); mesh.setMatrixAt(i, m); ghost.setMatrixAt(i, m); });
+    for (let i = 0; i < n; i++) mesh.setColorAt(i, new THREE.Color(1, 1, 1));
+    mesh.userData.g = groups.length; scene.add(ghost); scene.add(mesh);
+    groups.push({act:a, mesh, ghost, n, o, roof:!!o.opt.roof});
+  });
+  DD = Math.round(finish * (p.dd || .5));
+  $("slider").max = finish; $("slider").value = DD;
+  $("pcode").textContent = p.code + " · " + p.kind; $("ptitle").textContent = p.title; $("psub").textContent = p.sub;
+  st.sel = null; readColors(); drawGantt(); summary(); resetView(); select(p.sel || A.find(a => a.dur > 0 && a.crit).id);
+  document.querySelectorAll(".card").forEach(c => c.setAttribute("aria-current", c.dataset.k === p.key));
+}
+const resetView = () => { camera.position.set(...P.cam.p); controls.target.set(...P.cam.t); controls.update(); };
+
+// ---------- calendar & progress ----------
+const ntp = () => new Date(...P.ntp);
+const wdDate = w => { const d = ntp(); let n = Math.floor(w); while (n > 0) { d.setDate(d.getDate() + 1); if (d.getDay() % 6) n--; } return d; };
+const fmt = d => d.toLocaleDateString("ar-EG-u-nu-latn", {day:"2-digit", month:"long", year:"numeric"});
+const prog = a => !a ? 0 : a.dur === 0 ? (DD >= a.es ? 1 : 0) : Math.max(0, Math.min(1, (DD - a.es) / a.dur));
+
+// ---------- update ----------
+function readColors(){
+  Object.keys(TRADE).forEach(k => C[k] = new THREE.Color(css("--t-" + k) || "#888"));
+  ["crit","live","sel","muted","scene","ground"].forEach(k => C[k] = new THREE.Color(css("--" + k) || "#888"));
+  renderer.setClearColor(C.scene); groundMat.color.copy(C.ground); scene.fog.color.copy(C.scene);
+  const cm = {road:"--road", mark:"--mark", bldg:"--bldg", tree:"--tree", trunk:"--trunk", fence:"--muted", car:"--car", water:"--water", lawn:"--lawn"};
+  ctxMeshes.forEach(m => m.mesh.material.color.set(css(cm[m.kind] || "--bldg") || "#999"));
+  groups.forEach(g => g.ghost.material.color.copy(C.muted));
+  update();
+}
+const dim = new THREE.Color();
+function update(){
+  if (!P) return;
+  const cnt = {done:0, live:0, todo:0};
+  A.forEach(a => { const p = prog(a); p >= 1 ? cnt.done++ : p > 0 ? cnt.live++ : cnt.todo++; });
+  groups.forEach(g => {
+    const a = g.act, p = prog(a), off = st.hidden.has(a.trade) || (g.roof && st.roofOff);
+    g.mesh.visible = !off; g.ghost.visible = st.ghost && !off;
+    let base = C[a.trade] || C.muted; if (st.crit) base = a.crit ? C.crit : dim.copy(C.muted);
+    const selC = st.sel === a.id ? C.sel : null;
+    if (g.o.shape === "tilt") {
+      const cast = prog(byId[g.o.cast]), n = g.n; g.mesh.count = Math.ceil(cast * n - 1e-9);
+      g.o.pans.forEach((pn, i) => {
+        const k = p * n - i, up = k >= 1 ? 1 : k <= 0 ? 0 : k, phi = (1 - up) * Math.PI / 2, h = pn.h, w = pn.w, t = pn.t || .3;
+        const r = new THREE.Matrix4(); let off2, sc;
+        if (pn.f === "S") { r.makeRotationX(phi); off2 = [0, h / 2, t / 2]; sc = [w, h, t]; }
+        if (pn.f === "N") { r.makeRotationX(-phi); off2 = [0, h / 2, -t / 2]; sc = [w, h, t]; }
+        if (pn.f === "W") { r.makeRotationZ(-phi); off2 = [t / 2, h / 2, 0]; sc = [t, h, w]; }
+        if (pn.f === "E") { r.makeRotationZ(phi); off2 = [-t / 2, h / 2, 0]; sc = [t, h, w]; }
+        const m = new THREE.Matrix4().makeTranslation(pn.x, pn.y || .25, pn.z).multiply(r).multiply(new THREE.Matrix4().makeTranslation(...off2)).multiply(new THREE.Matrix4().makeScale(...sc));
+        g.mesh.setMatrixAt(i, m); g.ghost.setMatrixAt(i, m);
+        g.mesh.setColorAt(i, selC || ((up > 0 && up < 1) ? C.live : base));
+      });
+      g.mesh.instanceMatrix.needsUpdate = true; g.ghost.instanceMatrix.needsUpdate = true;
+    } else {
+      const nv = p >= 1 ? g.n : Math.ceil(p * g.n - 1e-9); g.mesh.count = nv;
+      const c = selC || (p > 0 && p < 1 ? C.live : base);
+      for (let i = 0; i < nv; i++) g.mesh.setColorAt(i, c);
+    }
+    if (g.mesh.instanceColor) g.mesh.instanceColor.needsUpdate = true;
+  });
+  ctxMeshes.forEach(m => { const o = m.opt; m.mesh.visible = (!o.showWhen || prog(byId[o.showWhen]) >= 1) && (!o.hideWhen || prog(byId[o.hideWhen]) < 1); });
+  $("ddlab").textContent = "تاريخ البيانات " + fmt(wdDate(DD));
+  $("stat").textContent = `${Math.round(DD / finish * 100)}% من المدة · ${cnt.done} منجز · ${cnt.live} قيد التنفيذ · ${cnt.todo} لم يبدأ`;
+  const l = $("ddl"); if (l) { const xx = gx(DD); l.setAttribute("x1", xx); l.setAttribute("x2", xx); }
+}
+
+// ---------- panels ----------
+function summary(){
+  const crit = A.filter(a => a.crit && a.dur > 0).length;
+  $("summary").innerHTML = `<span>أمر المباشرة</span><b>${fmt(ntp())}</b><span>النهاية</span><b>${fmt(wdDate(finish))}</b><span>المدة</span><b>${finish} يوم عمل</b>` +
+    `<span>الأنشطة</span><b>${A.length} (منها ${A.filter(a => a.dur === 0).length} معالم)</b><span>الحرجة</span><b>${crit} نشاطاً</b>` +
+    `<span>النموذج</span><b>${groups.reduce((s, g) => s + g.n, 0).toLocaleString("en-US")} عنصر، LOD 350</b>`;
+}
+function select(id){
+  const a = byId[id]; if (!a) return; st.sel = id;
+  const p = prog(a), state = p >= 1 ? '<span class="pill d">منجز</span>' : p > 0 ? '<span class="pill l">قيد التنفيذ</span>' : '<span class="pill d">لم يبدأ</span>';
+  const els = groups.filter(g => g.act.id === id).reduce((s, g) => s + g.n, 0);
+  $("info").innerHTML = `<p class="mono" style="color:var(--crit);margin:0 0 4px">${a.id} ${a.crit ? '· <span class="pill c">حرج</span>' : ""}</p>
+    <p style="margin:0 0 10px;font-weight:600">${a.name}</p>
+    <div class="kv"><span>الحالة</span><b>${state} ${Math.round(p * 100)}%</b><span>البداية</span><b>${fmt(wdDate(a.es))}</b><span>النهاية</span><b>${fmt(wdDate(a.ef))}</b>
+    <span>المدة</span><b>${a.dur} يوم</b><span>الفائض الكلي</span><b>${a.tf} يوم</b><span>التخصص</span><b>${TRADE[a.trade] || (a.trade === "proc" ? "التوريد" : "معلم رئيسي")}</b>
+    <span>العناصر</span><b>${els || "لا يوجد (بدون عناصر مرئية)"}</b><span>الأنشطة السابقة</span><b>${a.preds.join(", ") || "-"}</b><span>الأنشطة اللاحقة</span><b>${a.succ.join(", ") || "-"}</b></div>`;
+  document.querySelectorAll("#gsvg .row").forEach(r => r.querySelector("rect.bg").setAttribute("fill", r.dataset.id === id ? "var(--band)" : "transparent"));
+  update();
+}
+const GL = 330, GW = 1100, GH = 17, GT = 22;
+const gx = d => GL + (GW - GL - 12) * d / finish;
+function drawGantt(){
+  const rows = [...A].sort((a, b) => a.es - b.es || a.ef - b.ef), h = GT + rows.length * GH + 6; let s = "";
+  for (let m = 0; m <= 60; m++) { const d = ntp(); d.setMonth(d.getMonth() + m); let w = 0; const t = ntp(); while (t < d) { t.setDate(t.getDate() + 1); if (t.getDay() % 6) w++; } if (w > finish) break;
+    const step = finish > 500 ? 4 : 2; s += `<line x1="${gx(w)}" x2="${gx(w)}" y1="${GT - 6}" y2="${h}" stroke="var(--rule)"/>` + (m % step ? "" : `<text x="${gx(w) + 3}" y="12">${d.toLocaleDateString("en-GB", {month:"short", year:"2-digit"})}</text>`); }
+  rows.forEach((a, i) => {
+    const y = GT + i * GH, fill = a.crit ? "var(--crit)" : "var(--t-" + (TRADE[a.trade] ? a.trade : "steel") + ")";
+    s += `<g class="row" data-id="${a.id}" tabindex="0" role="button" aria-label="${a.id} ${a.name}"><rect class="bg" x="0" y="${y}" width="${GW}" height="${GH}" fill="transparent"/>
+      <text x="6" y="${y + 12}">${a.id}</text><text class="nm" x="54" y="${y + 12}">${a.name.length > 46 ? a.name.slice(0, 45) + "…" : a.name}</text>` +
+      (a.dur ? `<rect x="${gx(a.es)}" y="${y + 4}" width="${Math.max(2, gx(a.ef) - gx(a.es))}" height="9" fill="${fill}" rx="1"/>`
+             : `<rect x="${gx(a.es) - 4}" y="${y + 4}" width="8" height="8" fill="${a.crit ? "var(--crit)" : "var(--ink)"}" transform="rotate(45 ${gx(a.es)} ${y + 8})"/>`) + `</g>`;
+  });
+  s += `<line id="ddl" y1="${GT - 8}" y2="${h}" stroke="var(--crit)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  $("gsvg").setAttribute("viewBox", `0 0 ${GW} ${h}`); $("gsvg").innerHTML = s;
+}
+
+// ---------- controls ----------
+$("slider").addEventListener("input", () => { DD = +$("slider").value; update(); });
+const tog = (id, key) => $(id).addEventListener("click", e => { st[key] = !st[key]; e.currentTarget.setAttribute("aria-pressed", st[key]); update(); });
+tog("bCrit", "crit"); tog("bRoof", "roofOff"); tog("bGhost", "ghost");
+$("bReset").addEventListener("click", resetView);
+let playing = false, timer = 0; const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function step(){ if (!playing) return; DD = Math.min(finish, DD + +$("speed").value * (reduce ? 3 : 1) / 2); $("slider").value = DD; update(); if (DD >= finish) return setPlay(false); timer = setTimeout(step, reduce ? 300 : 60); }
+function setPlay(on){ playing = on; $("bPlay").textContent = on ? "❚❚ إيقاف مؤقت" : "▶ تشغيل"; $("bPlay").setAttribute("aria-label", on ? "إيقاف مؤقت" : "تشغيل البرنامج الزمني"); clearTimeout(timer); if (on) { if (DD >= finish) DD = 0; step(); } }
+$("bPlay").addEventListener("click", () => setPlay(!playing));
+$("trades").innerHTML = Object.entries(TRADE).map(([k, v]) => `<label><input type="checkbox" id="tr-${k}" data-t="${k}" checked><i style="background:var(--t-${k})"></i>${v}</label>`).join("");
+$("trades").addEventListener("change", e => { const t = e.target.dataset.t; if (!t) return; e.target.checked ? st.hidden.delete(t) : st.hidden.add(t); update(); });
+$("gsvg").addEventListener("click", e => { const r = e.target.closest(".row"); if (r) select(r.dataset.id); });
+$("gsvg").addEventListener("keydown", e => { const r = e.target.closest(".row"); if (r && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); select(r.dataset.id); } });
+const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(); let down = null;
+renderer.domElement.addEventListener("pointerdown", e => down = [e.clientX, e.clientY]);
+renderer.domElement.addEventListener("pointerup", e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
+  const r = renderer.domElement.getBoundingClientRect();
+  mouse.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1); ray.setFromCamera(mouse, camera);
+  const hit = ray.intersectObjects(groups.filter(g => g.mesh.visible && g.mesh.count).map(g => g.mesh))[0];
+  if (hit) select(groups[hit.object.userData.g].act.id);
+});
+
+// ---------- picker ----------
+let sector = "fed";
+function renderPicker(){
+  $("tabs").innerHTML = SECTORS.map(([k, v]) => `<button type="button" class="tab" data-s="${k}" aria-pressed="${k === sector}">${v} (${P4D.filter(p => p.sector === k).length})</button>`).join("");
+  $("cards").innerHTML = P4D.filter(p => p.sector === sector).map(p => `<button type="button" class="card" data-k="${p.key}" aria-current="${P && P.key === p.key}"><span class="mono">${p.code}</span><b>${p.title}</b><span class="hint">${p.kind}</span></button>`).join("");
+}
+$("tabs").addEventListener("click", e => { const b = e.target.closest(".tab"); if (!b) return; sector = b.dataset.s; renderPicker(); });
+$("cards").addEventListener("click", e => { const b = e.target.closest(".card"); if (b) { location.hash = b.dataset.k; } });
+function route(){
+  const p = P4D.find(x => x.key === location.hash.slice(1)) || P4D.find(x => x.key === "dc-coldstorage") || P4D[0];
+  sector = p.sector; renderPicker();
+  try { load(p); } catch (err) { console.error(err); $("info").textContent = "تعذّر بناء هذا النموذج: " + err.message; }
+}
+window.addEventListener("hashchange", route);
+
+function size(){ const w = view.clientWidth, h = view.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+new ResizeObserver(size).observe(view);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", readColors);
+new MutationObserver(readColors).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+(function loop(){ controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop); })();
+size(); route();
+})();
+</script>
+
+</body>
+</html>
